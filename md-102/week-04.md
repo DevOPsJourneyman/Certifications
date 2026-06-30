@@ -1,374 +1,234 @@
-# Week 4 — MD-102 Domain 3 Part 2 + Domain 4: Apps + Full Practice Exam
+# Week 4 — MD-102 Domain 3 Part 1: Device Configuration + LAPS
 
-**Dates:** Jul 18 – Jul 24, 2026  
-**Target hours:** ~21h  
-**Focus:** Remote actions, device categories, Win32/MSI/Store app deployment, MAM, M365 Apps, full timed practice exam  
-**Exam weight:** D3 remainder + D4 (~15–20% for D4); full exam simulation Thu
+**Dates:** Jul 25 – Jul 31, 2026
+**Target hours:** ~10.5h (70% of weekly target)
+**Focus:** Device configuration profiles, settings catalog, ADMX templates, OMA-URI, LAPS, remote actions
+**Exam weight:** D3 = ~25–30% of MD-102
 
 ---
 
-## Saturday Jul 18 — D3 Part 2: Remote Actions + Device Categories + Inventory
-**Hours:** 5h | Big block — theory + lab
+## Daily Session Template
+
+1. **Review** (10 min) — Anki cards from previous session
+2. **Read** (varies) — topic notes + MS Learn module
+3. **Lab** (varies) — hands-on in dev tenant
+4. **Self-check** (15 min) — 4–5 exam-style questions; mark failures
+5. **Anki update** (10 min) — add cards for today's exam gotchas
+
+---
+
+## Saturday Jul 25 — Device Configuration Profiles
+
+**Hours:** 3.5h | Big block — theory + lab
 
 ### Topics
-
-**Remote device actions (exam-heavy — know all of them):**
-
-| Action | What it does | Data preserved? | Use case |
-|--------|-------------|----------------|----------|
-| Retire | Removes MDM, removes corp data, leaves personal data | Personal yes, corp no | BYOD offboarding |
-| Wipe | Factory reset, removes everything | Nothing | Lost/stolen corporate device |
-| Fresh start | Reinstalls Windows, removes OEM bloat | User data optional | Refresh without reprovision |
-| Autopilot reset | Returns to provisioning state | AAD join + Intune enrollment kept | Reassign to new user |
-| Delete | Removes device from Intune (not the device itself) | N/A — Intune record only | Stale record cleanup |
-| Sync | Forces immediate policy check-in | N/A | Policy not applying, test |
-| Restart | Remote OS restart | N/A | Apply pending updates |
-| Remote lock | Locks screen, PIN required to unlock | All data intact | Lost device, still trusted |
-| Reset passcode | iOS/Android: clears device PIN | All data intact | User forgot PIN |
-| Rotate BitLocker key | Generates new recovery key, uploads to Entra ID | All data intact | Key rotation compliance |
-| Collect diagnostics | Uploads logs to Intune portal | All data intact | Troubleshoot remotely |
-| Locate device | GPS location (supervised iOS + Android fully managed) | N/A | Lost device |
-
-**Device categories:**
-- Admin defines categories (e.g., "Corporate", "Kiosk", "Field Device")
-- User selects category during Company Portal enrollment (configurable to skip prompt)
-- Dynamic AAD group rule: `(device.deviceCategory -eq "Corporate")`
-- Use: automatically assign policies/apps to devices based on category at enrollment
-
-**Device inventory + hardware details:**
-- Intune → Devices → select device: hardware, discovered apps, managed apps, compliance, configuration, update status
-- Hardware inventory: model, serial, TPM version, storage, RAM, OS build, last check-in
-- Discovered apps: all apps installed (from Intune managed + user installed)
-- Managed apps: only Intune-deployed apps
-
-**Bulk device actions:**
-- Wipe, retire, sync, delete: can be applied to multiple devices at once via filter/export
-- Bulk enrollment: Windows Configuration Designer (provisioning packages)
+- **Profile types in Intune:**
+  - **Settings catalog:** modern approach — browse all available settings by category; replaces device restrictions template
+  - **Administrative templates (ADMX-backed):** Group Policy equivalent settings for Windows; ingests ADMX files from on-prem if needed
+  - **Device restrictions:** legacy template; maps to common lockdown settings (camera, screenshots, app install)
+  - **Custom (OMA-URI):** raw MDM configuration; used when a setting isn't in settings catalog or ADMX
+  - **Endpoint protection:** Windows Defender, BitLocker, firewall, Smart Screen — all in one profile
+  - **Email, VPN, Wi-Fi, Certificate profiles:** delivery of connection credentials to managed devices
+- **Profile assignment:**
+  - Assign to: user groups or device groups
+  - User group assignment: applies when the user signs in (follows the user, not device)
+  - Device group assignment: applies as soon as device enrolls (ideal for shared devices)
+  - Exclude groups: exclusion takes precedence over include
+- **Conflict resolution:**
+  - Same setting configured in two profiles → **Error/Conflict** state — neither value applies to that setting
+  - Conflict does NOT affect other settings in the same profile — only the conflicting setting
+  - Resolution: remove duplicate setting from one profile; use Intune reports to identify conflict source
+- **Profile applicability:**
+  - OS version filter: target only Win 10 22H2, or Win 11 23H2+ etc.
+  - Scope tags: RBAC boundary — admins only see profiles with matching scope tags
 
 ### MS Learn Modules
-- [Perform remote actions on devices](https://learn.microsoft.com/en-us/training/modules/perform-actions-for-device-management/)
-- [Monitor devices with Intune](https://learn.microsoft.com/en-us/training/modules/monitor-devices-with-intune/)
+- [Configure device profiles in Intune](https://learn.microsoft.com/en-us/training/modules/configure-device-profiles/)
+- [Create device configuration profiles](https://learn.microsoft.com/en-us/training/modules/create-device-configuration-profiles/)
 
 ### Lab Tasks
-1. Intune → Devices → select any enrolled device:
-   - Review available remote actions (note which are greyed out based on platform/join type)
-   - Click Sync → observe "Sync initiated" status
-   - Review Hardware tab: TPM version, storage, last check-in time
-2. Intune → Device categories → Create a category: "Corporate-Windows"
-3. Create a dynamic AAD group: rule `(device.deviceCategory -eq "Corporate-Windows")`
-4. Intune → Devices → All devices → Filter → select 2+ devices → Sync (bulk action)
-5. Review "Discovered apps" on a device — note an app you didn't deploy via Intune
+1. Create a Settings Catalog profile → Windows → target: Windows 10/11
+   - Browser: configure Microsoft Edge homepage URL, disable InPrivate mode
+   - Assign to All Devices
+2. Create an ADMX-backed Administrative Templates profile:
+   - Computer config → Windows components → OneDrive → Silently move Windows known folders to OneDrive = Enabled
+   - Assign to a pilot device group
+3. Create a custom OMA-URI profile:
+   - OMA-URI: `./Device/Vendor/MSFT/Policy/Config/Browser/AllowSmartScreen`
+   - Data type: Integer, Value: 1
+   - (Note: Settings Catalog covers this too — this is just OMA-URI practice)
+4. Intune → Devices → Configuration → select your Settings Catalog profile → Device status — verify assignment
+5. Intune → Devices → Configuration → select your ADMX profile → Per-setting status — check for conflict state
 
 ### Self-Check
-1. **Wipe vs Retire vs Fresh start vs Autopilot reset** — match each to its use case:
-   - A. Reassign a corporate laptop to a new employee without re-enrolling
-   - B. Remove a former employee's personal phone from company access
-   - C. A corporate laptop is stolen; wipe everything
-   - D. Corporate laptop has too much OEM bloat; clean reinstall keeping Windows Hello
-2. Device category is set to "Field Device" during enrollment. How does Intune use this automatically?
-3. A device is deleted from Intune but not retired. The user turns the device on. What happens at next sync?
-4. Remote lock is triggered on an AAD Joined Windows device. What does the user see?
-5. Rotate BitLocker key action — where does the new recovery key appear after rotation?
+1. A settings catalog profile and a device restrictions profile both configure the same setting. What is the resulting state for that setting on the device?
+2. A Wi-Fi profile is assigned to a user group. A device is enrolled but no user has signed in. Will the Wi-Fi profile apply?
+3. OMA-URI `./Device/Vendor/MSFT/...` targets the device. `./User/Vendor/MSFT/...` targets what?
+4. An admin needs to push a Group Policy setting that is not yet in the Settings Catalog. Which profile type should they use?
+5. A device is in both an "Include" group and an "Exclude" group for a configuration profile. Which takes precedence?
 
 ### Anki Cards to Build
-- Retire vs Wipe: personal data distinction
-- Fresh start: OEM bloat gone, user data optional, AAD join kept
-- Autopilot reset: MDM enrollment kept, returned to provisioning (OOBE)
-- Device category → dynamic group → policy assignment chain
-- Delete ≠ Wipe: delete removes Intune record; device can re-enroll
+- Settings catalog: modern, browse-all-settings approach — replaces device restrictions
+- ADMX templates: GPO equivalent in Intune — use for settings not yet in catalog
+- OMA-URI `./Device/` vs `./User/`: device-scope vs user-scope MDM URI
+- Conflict state: same setting in two profiles → Error — neither value applied to that setting
+- Exclude > Include: exclusion always wins in Intune assignment
 
 ---
 
-## Sunday Jul 19 — REST
+## Sunday Jul 26 — REST
 
 No study. Full rest day.
 
 ---
 
-## Monday Jul 20 — D4: Win32 App Deployment + MSI + Store Apps
-**Hours:** 5h | Big block — theory + lab
+## Monday Jul 27 — LAPS + Remote Actions
+
+**Hours:** 3.5h | Big block — theory + lab
 
 ### Topics
-
-**Win32 app deployment (exam-heavy):**
-- **IntuneWinAppUtil.exe**: packages app folder → `.intunewin` format; required for Win32 upload
-- Install command: `setup.exe /S` or `msiexec /i app.msi /qn` — depends on installer
-- Uninstall command: must be specified; different from install command
-- Detection rules:
-  - **File/folder**: path + file exists, or version comparison
-  - **Registry**: key exists, or value comparison
-  - **MSI product code**: auto-detected for MSI installers
-  - **Custom script**: PowerShell returns exit code 0 = detected
-- Requirement rules: minimum OS version, disk space, RAM, custom script
-- **Install context**: System (runs as SYSTEM, installs for all users) vs User (runs as logged-in user)
-- **Dependency**: define prerequisite apps that must install first (auto-installed if not present)
-- **Supersedence**: replace or update older version of same app; old version uninstalled if configured
-- Assignment types:
-  - Required: mandatory install (or uninstall)
-  - Available for enrolled devices: optional from Company Portal
-  - Available with enrollment: MAM users see in Company Portal without MDM
-- Delivery Optimization: Win32 apps cached via DO when content is available
-- **Intune Management Extension (IME)**: required agent for Win32 apps, PowerShell scripts, and Win32 dependencies; auto-installed when Win32 app or PowerShell script is assigned
-
-**MSI / Line-of-Business (LOB) apps:**
-- Direct upload: .msi, .msix, .msixbundle, .appx, .appxbundle
-- MSI: Intune extracts ProductCode automatically for detection
-- Limited compared to Win32: no dependency, no supersedence, no requirement rules
-- Install context: determined by MSI installer property
-
-**Microsoft Store apps (new):**
-- Powered by WinGet; Intune queries new Microsoft Store directly
-- Search by name, add to Intune, assign — no packaging needed
-- Architecture: 32-bit, 64-bit, or ARM auto-selected by Windows
-- Updates: managed by Windows; not via Intune update ring
-
-**App categories and filters:**
-- App categories: tag apps for Company Portal display grouping
-- Assignment filters: assign to subset of group (e.g., only Win 11 devices from an "All Devices" group)
+- **Windows LAPS (Local Administrator Password Solution):**
+  - Manages local administrator account passwords on Windows devices
+  - Intune-managed LAPS: stores password in Entra ID (not on-prem AD)
+  - Requirements: Windows 11 22H2+ (built-in), or Windows 10/11 with KB5025221+ (April 2023 CU)
+  - Password rotation: on-demand (manual rotate in Intune) or automatic at configurable interval
+  - Who can view LAPS password: Global Admin, Intune Admin, or custom role with "Read BitLocker key" permission
+  - LAPS manages: local administrator accounts only — NOT domain accounts
+  - Configuration: Endpoint security → Account protection → LAPS policy
+- **Remote device actions in Intune:**
+  - **Retire:** removes MDM enrollment + company data, leaves personal data — BYOD offboarding
+  - **Wipe:** factory reset — removes everything including OS; optional: retain enrollment state for Autopilot
+  - **Fresh Start (Windows):** reinstalls Windows, removes OEM bloatware, keeps user data + MDM enrollment
+  - **Delete:** removes device record from Intune — does NOT wipe the device
+  - **Sync:** forces device to check in with Intune immediately
+  - **Restart:** remote restart (requires device online)
+  - **Collect diagnostics:** pulls logs from device to Intune portal (Windows only)
+  - **Rotate BitLocker key:** generates new recovery key and escrows to Intune/Entra
+  - **Locate device (iOS/macOS):** GPS location from Managed Device
+  - **Lost mode (iOS):** locks device, shows message, plays sound — only Supervised devices
 
 ### MS Learn Modules
-- [Deploy apps using Intune](https://learn.microsoft.com/en-us/training/modules/deploy-apps-by-using-intune/)
-- [Add and assign Win32 apps](https://learn.microsoft.com/en-us/training/modules/deploy-apps-by-using-intune/)
+- [Manage device security with endpoint security policies](https://learn.microsoft.com/en-us/training/modules/manage-device-security-endpoint-security-policies/)
+- [Monitor device configuration profiles](https://learn.microsoft.com/en-us/training/modules/monitor-device-configuration-profiles/)
 
 ### Lab Tasks
-1. Download IntuneWinAppUtil.exe from GitHub → package a sample installer:
-   - Source: any folder with a setup.exe
-   - Command: `IntuneWinAppUtil.exe -c <sourcefolder> -s setup.exe -o <outputfolder>`
-2. Intune → Apps → Windows → Add → Windows app (Win32) → upload .intunewin:
-   - Install command: `setup.exe /S`
-   - Detection: registry key or file path
-   - Assign as Required to a test device group
-3. Add a Microsoft Store app: search "7-Zip" → assign as Available
-4. Review an existing app: Apps → Windows → select app → Device install status
-5. Intune → Apps → App install status report → review failure reasons (error codes)
+1. Endpoint security → Account protection → LAPS policy → Windows 10 and later:
+   - Backup directory: Azure Active Directory
+   - Password age (days): 30
+   - Administrator account name: specify (or use default built-in admin)
+   - Assign to pilot device group
+2. View LAPS password: Devices → select enrolled device → Local administrator password
+3. Practice remote actions on a test device:
+   - Sync → observe check-in time update
+   - Collect diagnostics → download the zip
+   - Restart (if device is available)
+4. Review retire vs wipe: Devices → select device → Retire vs Wipe — note the confirmation dialog difference
+5. Rotate BitLocker key: Devices → select device → Rotate BitLocker keys (if BitLocker is enabled)
 
 ### Self-Check
-1. Win32 app fails to install. Detection rule uses "MSI product code." The MSI was recently updated and the product code changed. What happens to Intune's detection?
-2. Intune Management Extension (IME) is not installed on a device. An admin assigns a Win32 app. What happens?
-3. Win32 app assignment: Available vs Required — what is the user experience difference?
-4. Supersedence in Win32 apps: what happens to the previous version when supersedence is configured with "Uninstall previous version"?
-5. An app has a dependency configured. The primary app is assigned as Required. The dependency is only available for the same device group. What does Intune do when installing the primary app?
+1. A device is unenrolled from Intune using "Retire." Is the device wiped?
+2. A LAPS policy is assigned to a Windows 10 21H2 device. The device does not have KB5025221 installed. Will LAPS work?
+3. Who can view the LAPS password in Intune by default (minimum built-in role)?
+4. "Delete" is performed on an Intune device record. The device still has Windows installed. What happens?
+5. A corporate iOS device is lost. It is a Supervised device enrolled via ADE. What remote action can you take to lock it, display a message, and play a sound?
 
 ### Anki Cards to Build
-- IntuneWinAppUtil.exe: must package before Win32 upload; .intunewin format
-- IME: required for Win32 + PowerShell scripts; auto-installs on assignment
-- Detection rule: custom script = exit 0 means detected; exit 1 = not detected
-- Dependency: auto-installed before primary app, even if not separately assigned
-- Supersedence: uninstall old version + install new; or update only
+- LAPS requires: Windows 11 22H2+ built-in OR Windows 10/11 + KB5025221 (April 2023 CU)
+- LAPS password stored in: Entra ID (Intune-managed) or on-prem AD (legacy LAPS)
+- Retire: removes company data + MDM; leaves personal data (BYOD wipe)
+- Wipe: full factory reset; optional retain enrollment state
+- Delete: removes Intune record only — device not wiped
+- Fresh Start: reinstall Windows, remove OEM bloatware, keep user data + MDM
 
 ---
 
-## Tuesday Jul 21 — D4: MAM + App Protection Policies
-**Hours:** 3.5h | WFH — focused topic
+## Tuesday Jul 28 — Endpoint Security Policies + Monitoring
+
+**Hours:** 2.5h | WFH — focused topic
 
 ### Topics
-
-**App Protection Policies (APP) / MAM:**
-- **MAM-WE** (without enrollment): no device MDM required; app-level policy only; BYOD use case
-- **MAM with enrollment**: enrolled device + APP = strongest control; corporate-owned
-- APP settings categories:
-  - **Data relocation:** cut/copy/paste (block between managed/unmanaged apps), save to (block save to personal storage), receive data from (which apps can share data in)
-  - **Access requirements:** PIN, biometric, work account credentials required to open app
-  - **Conditional launch:** offline grace period, min app version, min OS version, block jailbroken/rooted, max sign-in attempts
-- Managed apps (APP-aware): Outlook, Teams, Edge, Office apps, OneDrive — have Intune SDK built in
-- **Selective wipe:** removes corp app data + APP policy; leaves personal data and unmanaged apps untouched
-- App status reports: Device install status, User install status, App protection status
-
-**Windows Information Protection (WIP) — legacy but on exam:**
-- Protects corp data on Windows 10 devices (not Windows 11, officially deprecated)
-- **Enlightened apps**: WIP-aware; can switch between personal and corp context (Office, Edge)
-- **Unenlightened apps**: treated as personal; corp data cannot be pasted in
-- WIP modes: Off → Silent (audit only) → Allow overrides → Block (strictest)
-- WIP is NOT the same as MAM APP; WIP is for Windows, APP is for iOS/Android primarily
-- Status: deprecated, but appears in MD-102 exam questions
-
-**App configuration policies:**
-- Push app settings without user interaction (e.g., pre-configure Outlook email account)
-- Two types: managed devices (MDM-enrolled) vs managed apps (APP-targeted, no enrollment needed)
-- Managed apps type: uses App Config channel (Intune SDK); applies even without MDM
+- **Endpoint security policy types:**
+  - Antivirus: Defender AV settings — real-time protection, cloud protection, exclusions, PUA protection
+  - Disk encryption: BitLocker for Windows, FileVault for macOS — configure and escrow recovery keys
+  - Firewall: Windows Defender Firewall rules — inbound/outbound, per-profile (domain/private/public)
+  - Endpoint detection and response (EDR): MDE onboarding settings
+  - Attack surface reduction (ASR): ASR rules, controlled folder access, network protection
+  - Account protection: LAPS, Windows Hello for Business enrollment
+- **BitLocker configuration via Intune:**
+  - Require BitLocker: via compliance policy (reports compliance) vs via endpoint protection profile (configures BitLocker)
+  - Escrow recovery key: endpoint protection profile → BitLocker → configure recovery key backup to Entra ID
+  - Silent enablement: pre-provision BitLocker via Autopilot + endpoint protection profile
+  - View recovery key: Devices → select device → Recovery keys → BitLocker
+- **Intune monitoring and reports:**
+  - Reports → Endpoint security → reports by policy type (Antivirus, Firewall, BitLocker)
+  - Devices → Monitor → Device compliance (per-device state)
+  - Devices → Configuration → select profile → Device status (per-device assignment result)
+  - Reports → Windows → Feature update failures (specific to WUfB)
 
 ### MS Learn Modules
-- [Configure app protection policies](https://learn.microsoft.com/en-us/training/modules/configure-app-protection-policies/)
-- [Implement mobile application management](https://learn.microsoft.com/en-us/training/modules/implement-mobile-application-management/)
+- [Manage endpoint security in Microsoft Intune](https://learn.microsoft.com/en-us/training/modules/manage-endpoint-security/)
 
 ### Lab Tasks
-1. Intune → Apps → App protection policies → Create policy → iOS/iPadOS:
-   - Apps: Microsoft Outlook
-   - Data relocation: block "Send org data to other apps" = Policy managed apps only
-   - Access: require PIN (4 digits), allow biometric
-   - Conditional launch: offline grace = 720 hours (30 days); block jailbroken
-   - Assign to user group (NOT device group — APP assigns to users)
-2. Create a Windows APP policy (WIP — for exam familiarity):
-   - Mode: Allow overrides
-   - Protected apps: add Office apps
-   - Assign to user group
-3. App configuration policy: Intune → Apps → App configuration policies → managed apps → Outlook:
-   - Pre-configure account: use Azure AD username token
-4. Review app protection status: Apps → Monitor → App protection status → select user → view per-app compliance
-5. Note: selective wipe — Devices → select device → Apps → select managed app → Selective wipe
+1. Endpoint security → Disk encryption → Create BitLocker policy:
+   - Require device encryption: Yes
+   - Recovery key backup: Require (backup to Entra ID)
+   - Startup PIN: require (or allow)
+   - Assign to pilot device group
+2. Endpoint security → Antivirus → create policy: real-time protection = On, cloud protection = Enabled, PUA protection = Enabled
+3. Reports → Endpoint security → BitLocker → check any devices showing "Not encrypted"
+4. Devices → select a device → Recovery keys → view BitLocker key (note: requires appropriate role)
+5. Endpoint security → Firewall → create policy → Windows firewall: Domain network = On, inbound = Block, outbound = Allow
 
 ### Self-Check
-1. A user has Outlook on their personal iPhone with an MAM APP policy (no MDM). They leave the company. What does selective wipe remove?
-2. APP is assigned to a user group. The same user has two devices: an enrolled corporate iPhone and a personal Android (not enrolled). Does APP apply to both?
-3. WIP mode "Allow overrides" — what can users do that "Block" mode prevents?
-4. App configuration policy: "managed apps" type vs "managed devices" type — which requires MDM enrollment?
-5. An APP conditional launch rule: "Min OS version = 15.0 — Block access." A user's iPhone runs iOS 14.8. What happens when they open Outlook?
+1. BitLocker compliance policy reports a device as non-compliant. Does this configure BitLocker encryption on the device?
+2. A device has two Intune antivirus policies assigning conflicting values to "Cloud protection level." What is the device's state for that setting?
+3. Where in Intune does an admin view a device's BitLocker recovery key?
+4. ASR rule "Block executable content from email and webmail client" is set to Audit mode. A user opens a malicious attachment. What happens?
+5. A user reports an Intune policy isn't applying. You want to see if the profile was assigned and what the result was. Where do you check?
 
 ### Anki Cards to Build
-- APP assigns to **users**, not devices (unlike most Intune policies)
-- Selective wipe: org data + APP removed; personal apps + photos untouched
-- MAM-WE: no MDM needed; app must have Intune SDK (managed app)
-- WIP: Windows-only, deprecated, still on exam; Enlightened = WIP-aware app
-- Conditional launch: Offline grace = days before app blocks access without connectivity
+- BitLocker compliance policy: reports compliance state — does NOT configure BitLocker
+- BitLocker endpoint protection profile: configures and enables BitLocker
+- Recovery key view: Devices → device → Recovery keys → BitLocker
+- ASR Audit mode: logs activity to Event Viewer/MDE — does NOT block
+- Conflict in endpoint security policies: same as config profiles — Error state for that setting
 
 ---
 
-## Wednesday Jul 22 — D4: M365 Apps + Office Cloud Policy + Carry-Forward
-**Hours:** 2.5h | Office — M365 Apps + Week 3 gaps
+## Wednesday Jul 29 — D3 Gap Fill + Self-Check
+
+**Hours:** 2h | Office
 
 ### Topics
+- Revisit any self-check failures from Sat–Tue
+- Settings catalog vs ADMX vs OMA-URI decision tree
+- Remote action use cases: when to use Retire vs Wipe vs Fresh Start vs Delete
 
-**Microsoft 365 Apps deployment via Intune:**
-- Intune has built-in Microsoft 365 Apps suite (no .intunewin needed)
-- Configuration: select suite (Word, Excel, PowerPoint, Outlook, Teams, etc.), architecture (64-bit preferred), update channel
-- **Update channels:**
-  - Current Channel: monthly feature updates, latest features fastest
-  - Monthly Enterprise Channel: monthly updates, one-month validation lag; predictable
-  - Semi-Annual Enterprise Channel: every 6 months; most stable; enterprise default
-- Assignment: Required (auto-install) or Available (user installs from Company Portal)
-- App configuration: Intune Office policies override local settings for managed apps
-
-**Office Cloud Policy service:**
-- Apply Office policy settings to users without Group Policy (no domain required)
-- Policies follow the user across any device (cloud-delivered, not device-specific)
-- Scope: Microsoft 365 Apps for enterprise (not Office LTSC or consumer)
-- Access: Microsoft 365 Apps admin center → Office cloud policy
-
-**Licensing via Intune / Entra:**
-- Microsoft 365 Apps license assigned to user in Entra ID admin center
-- No license = app installs but runs in reduced functionality mode (read-only)
-
-**Carry-forward from Week 3 (if any):**
-- Review D3 items scored ≤ 3 in confidence checklist
-- Close Anki gaps
-
-### Lab Tasks
-1. Intune → Apps → Windows → Add → Microsoft 365 Apps for Windows 10 and later:
-   - Suite: select Office apps (exclude Project/Visio)
-   - Architecture: 64-bit
-   - Update channel: Monthly Enterprise
-   - Assign as Required to device group
-2. Review Office Cloud Policy: navigate to config.office.com → Office customization tool → policies
-3. Check M365 Apps update channel in tenant: Intune → Apps → select M365 suite → Edit → update channel
-
-### Self-Check
-1. M365 Apps update channel for most enterprises wanting monthly updates with stability validation?
-2. Office Cloud Policy applies to which scope: device or user?
-3. A user has M365 Apps installed via Intune. Their license is removed from Entra ID. What happens to the installed apps?
-4. M365 Apps via Intune vs Win32 Win32 deployment via IntuneWinAppUtil: which is simpler and does NOT require packaging?
-5. Carry-forward: A macOS device enrolled via ADE has a configuration profile assigned. The profile requires the device be supervised. The device is ADE-enrolled. Will the profile apply?
-
-### Anki Cards to Build
-- M365 Apps update channels: Current (fastest) → Monthly Enterprise (stable monthly) → Semi-Annual (stable 6-monthly)
-- Office Cloud Policy: user-based, cloud-delivered, no GPO needed, no domain required
-- License removed → apps reduce to read-only (not uninstalled immediately)
+### Practice Questions (mixed D3 Part 1)
+1. An admin removes a setting from a settings catalog profile that was previously in conflict. When does the conflict resolve — immediately, or at next device check-in?
+2. A Windows 10 device has LAPS configured. The local admin password is 30 days old. The LAPS policy sets password age = 14 days. What happens at next Intune check-in?
+3. A device shows "Not evaluated" for a compliance policy. What does this state mean?
+4. You want to configure a custom Microsoft Edge policy that is not yet available in the Settings Catalog. Which profile type do you use and where do you get the ADMX file?
+5. An admin performs "Wipe" with "Retain enrollment state" enabled. The device reboots into OOBE. What happens at the OOBE screen?
 
 ---
 
-## Thursday Jul 23 — FULL TIMED PRACTICE EXAM (All Domains)
-**Hours:** 2.5h | Office — exam simulation
+## Thursday Jul 30 — Anki + Practice Gaps
 
-### Rules
-- 65 questions, 120 minutes (actual MD-102 exam: 40–60 questions, 120 min; adjust if using MeasureUp)
-- No notes, no browser, no looking anything up
-- Write down question numbers you were uncertain about (not just wrong — uncertain too)
-
-### Exam Source Options (pick one)
-1. **MeasureUp MD-102** (best fidelity; paid) — most like real exam
-2. **Microsoft free practice assessment** at learn.microsoft.com — free, shorter, scenario-based
-3. **Whizlabs MD-102** — cheaper paid option
-
-### Domain Coverage Target
-
-| Domain | % of MD-102 | Questions in 65q set |
-|--------|-------------|---------------------|
-| D1: Deploy Windows | 25–30% | ~18 |
-| D2: Manage Identity & Compliance | 25–30% | ~18 |
-| D3: Manage/Protect Devices | 25% | ~16 |
-| D4: Manage Applications | 15–20% | ~13 |
-
-### Score Log
-
-| Domain | # Correct / # Total | % |
-|--------|---------------------|---|
-| D1 (deploy/enrollment/WUfB) | / | |
-| D2 (identity/CA/compliance/MDE) | / | |
-| D3 (profiles/LAPS/remote actions) | / | |
-| D4 (Win32/MAM/M365 Apps) | / | |
-| **Total** | **/ 65** | |
-
-**Pass target:** ≥ 70% (MD-102 passing score is 700/1000)  
-**Strong target:** ≥ 80%
-
-### After the Exam
-- Do NOT look up answers during the exam
-- After time is up: log all wrong answers + uncertain answers
-- Save for Friday review
-
----
-
-## Friday Jul 24 — Review Practice Exam + Book Real Exam
-**Hours:** 2.5h | Office — debrief + book
+**Hours:** 2h | Office
 
 ### Tasks
-1. For every wrong answer: write the correct rule + why you missed it + Anki card
-2. For uncertain answers (right or wrong): add Anki card to reinforce
-3. Identify weakest domain from score log → flag for Phase 3 focus (if Apple weeks don't absorb)
-4. Full Anki deck run: all cards from Weeks 1–4
-
-### Book Exam Dates (deadline: today)
-- **MD-102 exam:** target exam week of Aug 4–8 (after 6-week plan completes Aug 3)
-- **Apple Device Support (SUP-2026):** target same window or 1 week after MD-102
-- Book at Pearson VUE: [home.pearsonvue.com/microsoft](https://home.pearsonvue.com/microsoft)
-- Allow 3–5 business days buffer between booking and exam
-
-### Week 4 Confidence Checklist
-
-| Topic | Score |
-|-------|-------|
-| Remote actions: Retire/Wipe/Fresh start/Autopilot reset | / 5 |
-| Device categories + dynamic group rules | / 5 |
-| Win32: IntuneWinAppUtil, detection rules, IME | / 5 |
-| Win32: Dependency vs Supersedence | / 5 |
-| APP: data relocation + access + conditional launch | / 5 |
-| MAM-WE vs MAM with enrollment | / 5 |
-| WIP: modes + enlightened apps (legacy, exam-present) | / 5 |
-| M365 Apps: update channels | / 5 |
-| Office Cloud Policy: scope + delivery | / 5 |
-| App configuration: managed device vs managed app type | / 5 |
+1. Full Anki review: D1 + D2 + D3 Part 1 decks
+2. 5-question self-quiz: mixed D1+D2+D3 — cover all domains studied so far
+3. Flag any D3 topics that need more coverage (carry to Week 5 D3 Part 2 review)
 
 ---
 
-## Week 4 Resources
+## Friday Jul 31 — Anki Review + Week Close
 
-| Resource | URL / Notes |
-|----------|-------------|
-| IntuneWinAppUtil (GitHub) | github.com/microsoft/Microsoft-Win32-Content-Prep-Tool |
-| Win32 app deployment docs | learn.microsoft.com/en-us/mem/intune/apps/apps-win32-app-management |
-| MAM / APP overview | learn.microsoft.com/en-us/mem/intune/apps/app-protection-policy |
-| M365 Apps deployment guide | learn.microsoft.com/en-us/deployoffice/ |
-| Office Cloud Policy | config.office.com |
-| Pearson VUE exam booking | home.pearsonvue.com/microsoft |
-| Newton topic file | `~/study-trainer/topics/md102-d4-manage-applications.md` |
-| MeasureUp MD-102 | measureup.com (paid; most accurate) |
+**Hours:** 1h | Office — Anki only
 
----
-
-## Week 4 Summary (fill in on Jul 24)
-
-- Hours logged: ___
-- Anki cards built: ___
-- Full practice exam score: ___ / 65 (___%)
-- Weakest domain: ___
-- MD-102 exam booked: Yes / No — date: ___
-- Apple exam booked: Yes / No — date: ___
+### Tasks
+1. Full review D3 Part 1 Anki deck
+2. Note weak cards — carry to Week 5
+3. Confirm lab tasks done: BitLocker policy, LAPS policy, settings catalog profile, remote action practice
