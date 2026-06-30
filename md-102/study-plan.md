@@ -4,11 +4,11 @@
 
 | Week | Dates | Domain | Focus |
 |------|-------|--------|-------|
-| 1 | Jun 24–30 | D1 | Autopilot, Windows Autopatch, WUfB, co-management |
-| 2 | Jul 1–7 | D2 | Entra join types, compliance policies, Conditional Access |
-| 3 | Jul 8–14 | D3 | Device config profiles, security baselines, Defender |
-| 4 | Jul 15–21 | D3+D4 | Advanced device mgmt + app deployment |
-| 5 | Jul 22–28 | All | Mock exams, weak area drills, gotcha review |
+| 1 | Jun 30 – Jul 6 | D1 | Autopilot, Windows Autopatch, WUfB, co-management |
+| 2 | Jul 7 – Jul 13 | D2 | Entra join types, compliance policies, Conditional Access |
+| 3 | Jul 14 – Jul 20 | D3 | Device config profiles, security baselines, Defender |
+| 4 | Jul 21 – Jul 27 | D3+D4 | Advanced device mgmt + app deployment |
+| 5 | Jul 28 – Aug 3 | All | Mock exams, weak area drills, gotcha review |
 
 ## Daily rhythm
 
