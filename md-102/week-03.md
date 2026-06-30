@@ -1,312 +1,191 @@
-# Week 3 — MD-102 Domain 3 Part 1: Manage and Protect Devices
+# Week 3 — MD-102 Catchup: D1 + D2 Review Buffer
 
-**Dates:** Jul 11 – Jul 17, 2026  
-**Target hours:** ~21h  
-**Focus:** Multi-platform enrollment, configuration profiles, LAPS, endpoint security policies, Intune reporting  
-**Exam weight:** D3 = ~25% of MD-102
-
----
-
-## Saturday Jul 11 — Multi-Platform Enrollment: macOS, iOS, Android
-**Hours:** 5h | Big block — theory + lab
-
-### Topics
-
-**macOS enrollment:**
-- Apple Business Manager (ABM) / Apple School Manager (ASM): device registration for ADE (Automated Device Enrollment)
-- ADE (formerly DEP): MDM profile pushed at activation, supervised, cannot be removed by user
-- User-initiated enrollment: downloads enrollment profile from Company Portal; unsupervised; user can remove
-- Intune Connector for Apple: token renewal required annually (ABM sync token)
-- Platform SSO (macOS 13+): Entra ID credentials used at macOS login screen
-- macOS enrollment profile: MDM push certificate required (Apple APNs cert, renew annually)
-
-**iOS / iPadOS enrollment:**
-- ADE (supervised): corporate-owned; MDM profile locked; strongest management
-- User Enrollment: BYOD; uses Managed Apple ID; limited management scope (no full wipe, no device inventory)
-- Web-based enrollment (iOS 16+): no Company Portal app needed
-- VPP (Volume Purchase Program) / Apple Business Manager: app licensing without Apple ID per user
-- Enrollment type determines supervision level → supervision required for many restrictions
-
-**Android enrollment:**
-- Android Enterprise modes:
-  - **Fully Managed (COBO):** corporate-owned, single user, full device management, no personal use
-  - **Dedicated (COSU):** corporate-owned, kiosk/shared device, locked to one or few apps
-  - **Work Profile (BYOD):** personal device, separate managed work profile, selective wipe only
-  - **Corporate-Owned Work Profile (COPE):** corporate-owned + personal use allowed, work profile + device management
-- Device Admin (legacy): avoid — limited capabilities, Google deprecated; still appears on exam
-- Zero-touch enrollment: Android equivalent of Autopilot for Fully Managed devices
-- Android Enterprise requires: Google account binding in Intune (Managed Google Play)
-
-### MS Learn Modules
-- [Set up Apple device management](https://learn.microsoft.com/en-us/training/modules/set-up-apple-device-management/)
-- [Set up Android device management](https://learn.microsoft.com/en-us/training/modules/set-up-android-device-management/)
-
-### Lab Tasks
-1. Intune → Devices → Enrollment → Apple → APNs certificate: review expiry date (do NOT let this expire in prod)
-2. Intune → Enrollment → Apple → Enrollment program tokens → review ABM token sync status
-3. Create an iOS ADE enrollment profile:
-   - Setup Assistant: skip location, skip privacy, skip Siri
-   - Supervised: Yes
-   - Locked enrollment: Yes
-   - Assign to device group
-4. Intune → Enrollment → Android → Managed Google Play: review binding status
-5. Create an Android Work Profile enrollment restriction — allow personally-owned work profile only (block fully managed for personal devices)
-
-### Self-Check
-1. A macOS device was enrolled via user-initiated enrollment. IT wants to push a kernel extension policy. Will this work? Why or why not?
-2. iOS ADE vs User Enrollment: which allows IT to perform a remote **full device wipe**?
-3. Android Work Profile enrollment: which data does Intune selective wipe remove?
-4. The APNs certificate for iOS expires tomorrow. IT doesn't renew it. What happens to existing enrolled iOS devices?
-5. Android Fully Managed vs Dedicated: key difference in intended use case?
-
-### Anki Cards to Build
-- ABM/ADE: supervised + locked = cannot remove MDM, full management
-- iOS User Enrollment: Managed Apple ID required, limited scope (no full wipe, no device inventory)
-- Android Work Profile: work data wiped, personal data untouched on selective wipe
-- APNs cert expiry: existing devices lose MDM communication; must renew before expiry
-- Zero-touch enrollment: Android Enterprise = Autopilot equivalent
+**Dates:** Jul 18 – Jul 24, 2026
+**Target hours:** ~10.5h (if full catchup needed) / skip if ≥ 75% on Week 2 assessment
+**Focus:** Targeted gap fill on D1 + D2 weak spots; Anki consolidation; re-test before D3
 
 ---
 
-## Sunday Jul 12 — REST
+## Skip Rule
+
+**If your Week 2 practice assessment score was ≥ 75%:** skip this week and go straight to `week-04.md`.
+
+**If score was < 75%:** use this week. Start by listing every question you got wrong — that list drives everything below.
+
+---
+
+## How to Use This Week
+
+1. Pull your wrong answers from the Week 2 assessment.
+2. Map each wrong answer to a topic (use the section headers below).
+3. Work only the sections that match your gaps — skip the rest.
+4. Re-test at the end of each day using the self-check questions.
+5. End of week: re-run the 20-question D1+D2 practice assessment. Target ≥ 80% before starting Week 4.
+
+---
+
+## D1 Weak Spot: Autopilot Modes + Pre-Provisioning
+
+### Key Facts to Drill
+- **User-driven:** user authenticates at OOBE, device joins AAD or Hybrid AAD — Intune MDM enrollment follows automatically
+- **Self-deploying:** no user interaction, no user affinity — kiosk/shared device use case; requires TPM 2.0 with device attestation
+- **Pre-provisioning (white glove):** technician phase first (device half-configured, rebooted, sealed), then user phase at delivery
+- **Technician phase:** installs device-targeted apps + policies; user sees ready-to-use OOBE
+- **ESP during white glove:** must complete before device is handed off; failure = device not ready
+
+### Practice Questions
+1. Autopilot self-deploying mode fails with "AADSTS50020." What does this error mean, and what is the likely cause?
+2. During white glove pre-provisioning, the technician phase completes but the ESP shows app install failure. What happens to the device — is it handed to the user anyway?
+3. You need to deploy 200 shared kiosk devices with no user sign-in. Which Autopilot mode and which Intune enrollment type is correct?
+4. An Autopilot device joins AAD but does not enroll in Intune. What is the most common cause?
+5. White glove pre-provisioning requires which Intune license minimum?
+
+### Anki Cards to Review
+- Autopilot mode comparison table: user-driven / self-deploying / pre-provisioning
+- ESP: what it tracks, when it blocks, how to troubleshoot failures
+- Self-deploying: requires TPM 2.0 + device attestation certificate
+
+---
+
+## D1 Weak Spot: WUfB Deferral Math
+
+### Key Facts to Drill
+- **Quality update deferral:** up to 30 days after Microsoft release date
+- **Feature update deferral:** up to 365 days after Microsoft release date
+- **Deadline:** days after deferral period ends — not after release date
+- **Example:** quality update released Jan 1, deferral = 7d, deadline = 5d → device must install by Jan 13
+- **Active hours:** Windows will not restart during active hours; grace period applies after deadline
+- **Autopatch difference:** Microsoft manages ring progression; you define no deferral settings — just exclude rings or pause
+
+### Practice Questions
+1. A WUfB ring has quality deferral = 14 days and deadline = 3 days. A quality update releases on Jul 1. What is the latest install date?
+2. A user reports their device restarted at 2am despite active hours set to 8am–10pm. The restart was to apply an update past its deadline. Is this expected behavior?
+3. Windows Autopatch is enabled. An admin tries to create a WUfB update ring in Intune. What happens?
+4. What is the maximum feature update deferral period?
+5. A device is in an update ring with no deadline set. The deferral period expires. When does the device install the update?
+
+### Anki Cards to Review
+- WUfB deadline math: deferral starts at release date; deadline starts when deferral ends
+- Post-deadline restart: active hours no longer respected — device restarts when idle
+- Autopatch: takes over update ring management — custom rings still exist but Autopatch controls cadence
+
+---
+
+## D1 Weak Spot: Co-Management Workloads
+
+### Key Facts to Drill
+- 7 workloads: Compliance Policies, Conditional Access, Resource Access, Endpoint Protection, Device Configuration, Office Click-to-Run, Windows Update Policies
+- Default: all workloads owned by ConfigMgr
+- Slider per workload: Intune / Pilot Intune / ConfigMgr
+- Pilot Intune: workload owned by Intune only for devices in a pilot collection
+- "Conditional Access" workload: determines which tool *evaluates* CA — but Entra ID enforces CA regardless
+- Enrollment path: ConfigMgr existing clients auto-enroll to Intune via cloud attach + co-management enablement
+
+### Practice Questions
+1. A co-managed device is in the pilot collection for the "Compliance Policies" workload (set to Pilot Intune). A device NOT in the pilot collection has no Intune compliance policy. What is its compliance state?
+2. An admin sets the "Windows Update Policies" workload to Intune for all devices. ConfigMgr still has a software update policy. Which policy applies?
+3. Co-management is enabled. A device in the "Endpoint Protection" pilot collection has both a ConfigMgr AV policy and an Intune AV policy targeting it. Which applies?
+4. What is the minimum ConfigMgr version required for co-management?
+5. A newly enrolled Autopilot device (cloud-only, no ConfigMgr) can participate in co-management: True or False?
+
+---
+
+## D2 Weak Spot: Conditional Access Logic
+
+### Key Facts to Drill
+- **No CA policy match → access granted** (CA is deny-by-exception, not allow-by-exception)
+- **Report-only mode:** policy is evaluated and logged; no enforcement action taken
+- **Grant controls (AND vs OR):** "Require all selected controls" = AND; "Require one of the selected controls" = OR
+- **Break-glass account:** global admin account excluded from all CA policies; used for emergency access
+- **Named location + trusted flag:** if sign-in from trusted IP, risk-based policies may be skipped
+- **Device filter conditions:** can target specific devices by attribute (e.g. model, compliant=true)
+
+### Practice Questions
+1. A CA policy requires MFA AND compliant device. A user passes MFA but their device is non-compliant. Are they granted access?
+2. A user signs in from an IP not covered by any CA named location. No CA policy matches their sign-in. Are they blocked?
+3. CA policy is in report-only mode. A user signs in and the policy would have blocked them. What does the user experience?
+4. A break-glass admin account has no MFA registered. A CA policy requiring MFA targets "All users." The break-glass account is not excluded. What happens when it signs in?
+5. A CA policy targets "All cloud apps" and grants access only if sign-in risk = Low. The user has no Entra ID P2 license. Does the policy evaluate the risk condition?
+
+---
+
+## D2 Weak Spot: Compliance + WHfB + Identity Protection
+
+### Key Facts to Drill
+- **No compliance policy assigned = compliant** (default — can be changed to "Mark as not compliant" in tenant settings)
+- **Grace period:** device is flagged non-compliant but CA still grants access; email sent based on noncompliance actions
+- **WHfB Cloud Trust:** requires Kerberos Cloud Trust Samba extension — no PKI, no DC patches needed
+- **WHfB Key Trust:** requires KB5014754 on DCs + hybrid Entra join — no PKI but DC-dependent
+- **Identity Protection risk:** requires Entra ID P2; without P2, risk conditions in CA are ignored
+- **User risk remediation:** user must self-remediate via SSPR (password change) — admin can also manually dismiss
+- **MFA methods hierarchy:** hardware FIDO2 > WHfB > authenticator app > phone call > SMS > security questions
+
+### Practice Questions
+1. A device has a compliance policy assigned. The policy has a 7-day grace period. On Day 8, the device remains non-compliant. A CA policy requires "compliant device." Can the user access O365?
+2. An admin configures a user risk policy at "High" risk → block access. A user has accumulated High risk from leaked credentials. They reset their password via SSPR. Can they now access resources without admin intervention?
+3. WHfB is deployed with Key Trust. A domain controller is missing KB5014754. What symptom will users experience?
+4. An Intune compliance policy is assigned to All Users. A device has no user signed in (shared device). What is its compliance state?
+5. SSPR is configured with 2 required methods. A user has registered: authenticator app + phone. Their phone is lost and they try SSPR using only the authenticator app. Can they reset?
+
+---
+
+## Saturday Jul 19 (wait — Jul 18 is Sat? Let me check)
+
+Week 3: Jul 18–24. Jul 18 = Saturday.
+
+## Saturday Jul 18 — D1 Gap Fill
+
+**Hours:** 3.5h | Big block
+
+Work through the D1 weak spot sections above that match your wrong answers. Focus time:
+- 90 min: re-read Newton topic file for relevant D1 section + MS Learn module
+- 60 min: lab task (if applicable)
+- 60 min: self-check from sections above
+
+## Sunday Jul 19 — REST
 
 No study. Full rest day.
 
----
+## Monday Jul 20 — D2 Gap Fill
 
-## Monday Jul 13 — Configuration Profiles: Windows + macOS
-**Hours:** 5h | Big block — theory + lab
+**Hours:** 3.5h | Big block
 
-### Topics
+Work through the D2 weak spot sections above that match your wrong answers. Focus time:
+- 90 min: re-read Newton topic file for relevant D2 section + MS Learn module
+- 60 min: lab task (if applicable)
+- 60 min: self-check from sections above
 
-**Windows configuration profiles:**
-- **Settings catalog** (preferred): granular settings from all Windows CSPs in one interface; searchable; replaces most templates
-- **Administrative Templates (ADMX-backed):** GPO-equivalent settings; ingested via Intune for third-party ADMX too
-- **Templates (legacy):** device restrictions, endpoint protection, etc.; being replaced by settings catalog
-- **OMA-URI (custom):** raw CSP paths for settings not yet in catalog; format: `./Vendor/MSFT/Policy/Config/<Area>/<Setting>`
-- Profile assignment: **device groups** = policy applies at enrollment regardless of user; **user groups** = applies when user signs in
-- Conflict resolution: if two profiles set the same setting to different values → **Conflict** state; neither value applies
-- Profile types for exam: device restrictions, endpoint protection, identity protection, kiosk, shared multi-user device
+## Tuesday Jul 21 — Mixed Practice
 
-**macOS configuration profiles:**
-- Preference domains: com.apple.Safari, com.microsoft.Intune, etc.
-- Intune macOS templates: device restrictions, endpoint protection, extensions, system preferences
-- Custom profiles: upload .mobileconfig XML; used for settings Intune UI doesn't expose
-- FileVault (disk encryption): enforce via endpoint security → disk encryption policy (not device config)
-- Kernel extensions (KEXT) + System Extensions: requires supervised + user-approved (or ADE-enrolled)
+**Hours:** 2.5h | WFH
 
-**Shared device config:**
-- Shared PC mode (Windows): multiple users, account cleanup, sleep/hibernation settings
-- Shared iPad: multiple Managed Apple IDs on one device (education focus, but on exam)
+1. 30-question mixed D1+D2 practice set (MeasureUp or self-quiz from both week files)
+2. Score and log result
+3. For every wrong answer: identify root cause (wrong fact vs misread question vs gap in lab experience)
+4. Add any new Anki cards from wrong answers
 
-### MS Learn Modules
-- [Configure device profiles](https://learn.microsoft.com/en-us/training/modules/configure-device-profiles/)
-- [Monitor device profiles](https://learn.microsoft.com/en-us/training/modules/monitor-device-profiles/)
+## Wednesday Jul 22 — Anki Consolidation
 
-### Lab Tasks
-1. Intune → Devices → Configuration → Create profile → Windows 10 and later → Settings catalog:
-   - Search "BitLocker" → enable OS drive encryption, require startup PIN
-   - Search "SmartScreen" → enable for apps + Edge
-   - Assign to device group
-2. Create a second profile: Administrative Templates → configure "Prevent access to registry editing tools" = Enabled
-3. Test conflict: assign both profiles to same group; set a setting (e.g., "Allow Telemetry") to different values in each → verify Conflict state in monitor
-4. Create a macOS profile: device restrictions → disable iCloud backup, disable AirDrop
-5. Review: Devices → Monitor → Assignment failures — note error code format
+**Hours:** 2h | Office
 
-### Self-Check
-1. Settings catalog vs Administrative Templates in Intune: which is the preferred method for new policy creation?
-2. A Windows device has two configuration profiles both targeting it. Profile A sets "Allow Telemetry" = 0. Profile B sets "Allow Telemetry" = 1. What is the resulting state?
-3. A macOS device needs a custom .mobileconfig deployed. What profile type is used in Intune?
-4. A configuration profile is assigned to a **user group**. A device has no user signed in (kiosk). Will the profile apply?
-5. OMA-URI path format: `./Vendor/MSFT/Policy/Config/Browser/AllowBrowser` — what does `./Vendor/MSFT` indicate?
+1. Full review of all D1 + D2 Anki cards — both decks
+2. Mark hard/failed cards — those get re-reviewed Thursday
+3. No new content — consolidation only
 
-### Anki Cards to Build
-- Settings catalog = preferred; Administrative Templates = GPO parity (ADMX-backed)
-- Conflict: two profiles, same setting, different values → neither applies, both show Conflict
-- Device group assignment: applies regardless of signed-in user
-- User group assignment: applies only when that user signs in; doesn't apply on shared/kiosk devices
-- OMA-URI: raw CSP path for unlisted settings; `./Device/` = device context; `./User/` = user context
+## Thursday Jul 23 — Hard Card Drill + Lab Loose Ends
 
----
+**Hours:** 2h | Office
 
-## Tuesday Jul 14 — LAPS + Endpoint Security Policies
-**Hours:** 3.5h | WFH — focused topic
+1. Re-drill hard Anki cards from Wednesday
+2. Complete any outstanding dev tenant labs from Weeks 1 or 2
+3. Review: Intune → Reports → Device compliance → check any flagged devices
 
-### Topics
+## Friday Jul 24 — Final D1+D2 Assessment
 
-**Microsoft LAPS (cloud-native):**
-- Manages local administrator account password on AAD Joined + Hybrid AAD Joined Windows devices
-- Password stored in Entra ID device object; rotated automatically on next login after expiry
-- Prerequisites: Windows 10 20H2+ or Windows 11, LAPS CSP enabled via Intune
-- Who can read LAPS password: Global Admin, Intune Admin, or custom role with `deviceManagementManagedDevices/laps` permission
-- Manual rotation: Intune → device → Rotate local admin password (immediate rotation)
-- Legacy LAPS (on-prem AD): separate — stores password in AD attribute; different from cloud LAPS
-- Exam trap: cloud LAPS ≠ legacy LAPS; both exist simultaneously, serve different join types
+**Hours:** 1.5h | Office
 
-**Endpoint security policies (Intune):**
-- Antivirus: Defender AV settings (real-time protection, cloud-delivered protection, sample submission, exclusions, scan schedule)
-- Disk encryption: BitLocker (Windows) — OS drive, fixed drive, removable drive; recovery key escrow to Entra ID
-- Firewall: Windows Defender Firewall per network profile (domain, private, public); custom firewall rules
-- Endpoint detection and response (EDR): onboarding package, MDE connectivity settings (covered Week 2)
-- Account protection: LAPS config (password length, complexity, age), credential guard, local user group membership
-- Attack surface reduction: ASR rules — always Audit → Block; never enable Block without baseline first
-- **Reusable settings groups:** define exclusions once, reference in multiple Antivirus policies (reduces duplication)
-- Security baselines vs endpoint security vs config profiles: all can manage Defender settings — conflict = whichever wins per CSP
-
-**BitLocker specifics (exam-heavy):**
-- Recovery key escrow to Entra ID: required before encryption allowed (configurable)
-- Silent encryption: TPM-only, no user prompt; requires AAD joined + modern standby or TPM 2.0
-- Startup PIN: user must enter PIN at boot; adds pre-boot auth
-- Fixed drive encryption: separate policy from OS drive; can require OS drive encrypted first
-
-### MS Learn Modules
-- [Configure Microsoft LAPS](https://learn.microsoft.com/en-us/training/modules/implement-endpoint-privilege-management/)
-- [Configure endpoint security in Intune](https://learn.microsoft.com/en-us/training/modules/configure-endpoint-security/)
-
-### Lab Tasks
-1. Intune → Endpoint security → Account protection → Create policy → Local admin password solution (LAPS):
-   - Password age: 14 days
-   - Password complexity: Letters + numbers + special
-   - Administrator account name: leave blank (manages built-in admin)
-   - Assign to Windows device group
-2. Intune → Endpoint security → Disk encryption → Create policy → BitLocker:
-   - OS drive: require encryption, recovery key to Entra ID, block write without encryption
-   - Fixed drives: require encryption
-   - Assign to same group
-3. View LAPS password (if device enrolled): Devices → select device → Local admin password
-4. Intune → Endpoint security → Antivirus → Create Defender AV policy:
-   - Enable cloud-delivered protection: Yes
-   - Enable real-time protection: Yes
-   - Sample submission: send safe samples
-5. Review reusable settings groups: Endpoint security → Reusable settings → create an exclusion group for a fake path (e.g., C:\BuildTools\)
-
-### Self-Check
-1. Cloud LAPS stores the local admin password where?
-2. A device needs silent BitLocker encryption. What two hardware requirements must be met?
-3. LAPS password rotation is triggered by admin from Intune. When does the new password take effect?
-4. Two Intune policies both configure Windows Defender Real-time protection: an Endpoint Security Antivirus policy and an MDM Security Baseline. The values differ. What is the resolution?
-5. BitLocker recovery key is not escrowed to Entra ID yet. The admin configured LAPS to require escrow before encryption. What does the device show in Intune?
-
-### Anki Cards to Build
-- Cloud LAPS: password in Entra device object; requires Win 10 20H2+ or Win 11
-- Silent BitLocker: TPM 2.0 + AAD joined (or modern standby)
-- LAPS rotation: immediate in portal, but password changes at **next device login**
-- Reusable settings groups: define AV exclusions once, reuse across policies
-- Endpoint security + config profile conflict on same CSP: conflict state, neither applies
-
----
-
-## Wednesday Jul 15 — D3 Part 1 Review + Week 2 Carry-Forward
-**Hours:** 2.5h | Office — consolidation + gap fill
-
-### Tasks
-1. Review Week 2 carry-forward items (anything scored ≤ 3 in D2 checklist)
-2. Run Anki deck: all Week 3 cards built Mon–Tue
-3. Review self-check failures from Sat + Mon + Tue
-4. If time: read [Intune reports overview](https://learn.microsoft.com/en-us/mem/intune/fundamentals/reports)
-
-### D3 Part 1 Carry-Forward Traps
-Common exam scenarios to verify you know cold:
-- macOS KEXT policy requires supervised device — user-enrolled macOS cannot receive it
-- Android Work Profile: IT manages work profile, user manages personal side; no full device wipe
-- LAPS: manual rotation in Intune changes password at next login, not immediately
-- Configuration profile conflict: BOTH profiles show conflict, NEITHER setting applies
-- ADE supervision: locked enrollment prevents profile removal; user-initiated does not
-
-### Self-Check (D3 Part 1 mixed)
-1. A macOS device enrolled via ADE has a Kernel Extension policy. A macOS device enrolled via user-initiated enrollment also has the same policy assigned. Which device successfully receives the KEXT policy?
-2. Android Dedicated (COSU) vs Fully Managed (COBO): which is designed for kiosk/shared use?
-3. A Windows Settings Catalog profile and an Administrative Template profile both set the same registry key to different values. What Intune state do both profiles show?
-4. Cloud LAPS password age is set to 30 days. The password was last set 35 days ago. A technician logs into the device. What happens?
-5. BitLocker silent encryption fails on a device. The device has TPM 2.0 but is Hybrid AAD Joined and on a domain network. What is likely missing?
-
----
-
-## Thursday Jul 16 — Intune Reporting + Device Health Monitoring
-**Hours:** 2.5h | Office — operational knowledge
-
-### Topics
-- **Intune report types:**
-  - Operational: real-time, unfiltered; e.g., "Noncompliant devices" — immediate current state
-  - Analytical: aggregated, historical trend; e.g., "Device compliance org" — trends over time
-  - Specialty: focused on specific scenarios; e.g., "Feature update failures"
-- **Key reports for exam:**
-  - Device compliance: per-device compliance state, per-setting breakdown
-  - Assignment failures: which profiles failed to apply and why
-  - Windows Update compliance: update rings deferral/install status
-  - Feature update report: upgrade deployment status
-  - App install report: per-app success/failure/pending
-- **Device health attestation:** TPM-based hardware health report; used in CA compliance evaluation
-- **Endpoint analytics:** boot time, restart frequency, app reliability, hardware scores
-- **Log collection:** Devices → Collect diagnostics → uploads diagnostic logs to Intune portal (no agent needed)
-- **Intune Data Warehouse:** export Intune data to Power BI for custom dashboards (ODATA endpoint)
-
-### Lab Tasks
-1. Intune → Reports → Device compliance → Org report → review compliance percentage by platform
-2. Intune → Devices → Monitor → Assignment failures → identify any profile or app failures
-3. Intune → Reports → Endpoint analytics → Startup performance (if data available) — note boot score
-4. Select a device → Collect diagnostics → verify upload to portal
-5. Intune → Reports → Windows updates → Feature update report → review success vs failed vs in progress
-
-### Self-Check
-1. Which Intune report type shows real-time noncompliant devices (not aggregated)?
-2. A profile shows "Error" in assignment status. Where do you go in Intune to find the specific error code?
-3. Endpoint analytics requires which agent or process on devices to collect boot data?
-4. Intune Data Warehouse — what is its primary use case?
-5. A device collects diagnostics successfully. Where do the logs appear in Intune?
-
-### Anki Cards to Build
-- Operational report = real-time current state; Analytical = trend/aggregated
-- Assignment failures report: specific error codes per device per profile
-- Endpoint analytics: requires Intune-managed + Intune Management Extension (IME) or ConfigMgr sensor
-- Collect diagnostics: no extra agent; output in Devices → device → Diagnostics tab
-
----
-
-## Friday Jul 17 — D3 Part 1 Final Review + Anki Run
-**Hours:** 2.5h | Office — close week, prep Week 4
-
-### Tasks
-1. Full Anki deck run: all Week 3 cards
-2. Review Week 3 self-check failures
-3. Preview Week 4: D3 Part 2 (remote actions, device categories) + D4 (app deployment, MAM, M365 Apps)
-4. Schedule: Week 4 ends with full 65-question timed practice exam (Thu Jul 23)
-
-### D3 Part 1 Confidence Checklist
-
-| Topic | Score |
-|-------|-------|
-| macOS enrollment: ADE vs user-initiated | / 5 |
-| iOS: ADE vs User Enrollment scope differences | / 5 |
-| Android Enterprise modes (COBO/COSU/Work Profile/COPE) | / 5 |
-| Windows config profiles: catalog vs templates vs OMA-URI | / 5 |
-| Profile conflict resolution | / 5 |
-| Device group vs user group assignment behavior | / 5 |
-| Cloud LAPS: prerequisites + password location + rotation | / 5 |
-| BitLocker silent encryption requirements | / 5 |
-| Endpoint security policy types | / 5 |
-| Intune report types: operational vs analytical | / 5 |
-
-Anything ≤ 3: carry into Week 4 buffer (Wed Jul 22).
-
----
-
-## Week 3 Resources
-
-| Resource | URL / Notes |
-|----------|-------------|
-| MS Learn D3 path | [Manage devices with Intune](https://learn.microsoft.com/en-us/training/paths/endpoint-manager-fundamentals/) |
-| Apple Platform Deployment guide | learn.microsoft.com/en-us/mem/intune/enrollment/device-enrollment |
-| Android Enterprise docs | learn.microsoft.com/en-us/mem/intune/enrollment/android-enroll |
-| LAPS overview | learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview |
-| John Savill — Intune deep dive | YouTube: "John Savill Microsoft Intune" |
-| Newton topic file | `~/study-trainer/topics/md102-d3-manage-protect-devices.md` |
-
----
-
-## Week 3 Summary (fill in on Jul 17)
-
-- Hours logged: ___
-- Anki cards built: ___
-- D3 Part 1 weakest area: ___
-- Carry-forward to Week 4 buffer: ___
+1. Take 20-question D1+D2 practice assessment
+2. Target: ≥ 80% before starting Week 4
+3. Score ≥ 80%? → Green light for Week 4 (`week-04.md`)
+4. Score < 80%? → Flag specific weak topics; carry as "must revisit" during Week 4 review sessions
+5. Log result in progress.json
