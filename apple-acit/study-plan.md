@@ -4,8 +4,8 @@
 
 | Week | Dates | Focus |
 |------|-------|-------|
-| 1 | Jun 24–30 | Device Support basics — hardware, macOS fundamentals |
-| 2 | Jul 1–7 | Device Support cont. + Deployment intro |
-| 3 | Jul 8–14 | Deployment & Management — ABM, MDM, supervision |
-| 4 | Jul 15–21 | Deployment advanced — profiles, network, security |
-| 5 | Jul 22–28 | Mock exams, weak area drills, gotcha review |
+| 1 | Jun 30 – Jul 6 | Device Support basics — hardware, macOS fundamentals |
+| 2 | Jul 7 – Jul 13 | Device Support cont. + Deployment intro |
+| 3 | Jul 14 – Jul 20 | Deployment & Management — ABM, MDM, supervision |
+| 4 | Jul 21 – Jul 27 | Deployment advanced — profiles, network, security |
+| 5 | Jul 28 – Aug 3 | Mock exams, weak area drills, gotcha review |
