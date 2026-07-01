@@ -16,6 +16,17 @@
 
 ---
 
+## Hands-On Lab (real device, this week)
+
+On the 2nd MacBook Pro (spare unit, not Newton):
+
+1. Boot into macOS Recovery for real (hold Power → Startup Options → Options → Continue) — explore Disk Utility, Startup Security Utility, Firmware Password Utility. Don't erase or reinstall — just navigate and confirm what each screen shows, then restart normally.
+2. Boot into Safe Mode (Startup Options → hold Shift → Continue in Safe Mode) — confirm it boots, note the login screen says "Safe Boot" in the top corner, then restart normally.
+3. Optional/only if comfortable: try `nvram boot-args=-v` from Terminal (in a normal boot) then reboot to see verbose-style output on Apple Silicon — revert with `nvram -d boot-args` afterward.
+4. Skip DFU mode hands-on this week unless you have a second Mac + cable free to be the "host" — DFU requires Apple Configurator 2 on another machine and is higher-risk to practice casually. Fine to leave as exam-knowledge only for now.
+
+---
+
 ## Saturday Jul 11 — macOS Recovery Modes
 
 **Hours:** 1.5h
