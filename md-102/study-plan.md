@@ -1,16 +1,18 @@
 # MD-102 Study Plan
 
-5-week schedule, parallel with Apple ACIT.
+The `week-01.md`–`week-08.md` files are the source of truth for daily content, labs, and self-checks. This page is an index only — don't duplicate schedule details here, it drifts.
 
-| Week | Dates | Domain | Focus |
-|------|-------|--------|-------|
-| 1 | Jun 30 – Jul 6 | D1 | Autopilot, Windows Autopatch, WUfB, co-management |
-| 2 | Jul 7 – Jul 13 | D2 | Entra join types, compliance policies, Conditional Access |
-| 3 | Jul 14 – Jul 20 | D3 | Device config profiles, security baselines, Defender |
-| 4 | Jul 21 – Jul 27 | D3+D4 | Advanced device mgmt + app deployment |
-| 5 | Jul 28 – Aug 3 | All | Mock exams, weak area drills, gotcha review |
+| Week | Focus |
+|------|-------|
+| 1 | D1: Deploy Windows Client (Autopilot, enrollment, WUfB, co-management) |
+| 2 | D2: Identity & Compliance (Entra join types, CA, WHfB, SSPR, MDE) |
+| 3 | Catchup/review buffer (skip rule: ≥75% on D1+D2 self-checks → jump to Week 4) |
+| 4 | D3 Part 1: config profiles, LAPS, remote actions, BitLocker |
+| 5 | D3 Part 2 + D4: compliance policies, MDE integration, Win32, MAM, M365 Apps |
+| 6 | Full D1–D4 review + full timed practice exam |
+| 7 | Final review + retrieval — no exam this week |
+| 8 | **MD-102 exam** — logistics, exam day, debrief |
 
 ## Daily rhythm
 
-Newton (Hermes) sends a morning nudge with today's focus topic.
-Midweek check: if < 50% of week objectives touched → drift alert.
+Newton (Hermes) sends a morning nudge with today's focus topic. Midweek check: if < 50% of week objectives touched → drift alert.
