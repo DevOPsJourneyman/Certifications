@@ -1,11 +1,10 @@
-# Week 7 — MD-102 Exam Week
+# Week 7 — MD-102 Final Review
 
 **Dates:** Aug 15 – Aug 21, 2026
-**Target hours:** ~5h (reduced load — exam week)
-**Focus:** Final retrieval practice, exam day logistics, MD-102 exam, post-exam debrief
-**Exam day (target):** Tuesday Aug 18, 2026
+**Target hours:** ~3h
+**Focus:** Final retrieval practice and exam-trap review. No exam this week — MD-102 exam is Week 8.
 
-> **No new content this week.** Everything is review, retrieval, and logistics. If you're tempted to study a new concept on Sunday — don't. Trust the 6 weeks.
+> No new content this week. Everything is review and retrieval. Exam day, logistics, and post-exam debrief live in `week-08.md`.
 
 ---
 
@@ -19,17 +18,9 @@
 
 ---
 
-## Daily Session Template (exam week — short)
-
-1. **Review** (5 min) — Anki "Again" + "Hard" cards only
-2. **Retrieval** (varies) — cold recall without notes, then verify
-3. **Logistics** (as needed) — confirm booking, ID, test environment
-
----
-
 ## Saturday Aug 15 — Final Retrieval Session
 
-**Hours:** 2h | Last big block — retrieval only, no reading
+**Hours:** 2h | Retrieval only, no reading
 
 ### Instructions
 - No open notes during this session — answer from memory first, then verify
@@ -87,11 +78,10 @@ No study. Full rest day, no exceptions.
 
 ---
 
-## Monday Aug 17 — Final Confidence Check + Exam Logistics
+## Monday Aug 17 — Top Exam Traps
 
-**Hours:** 1.5h | Day before exam — light touch only
+**Hours:** 1h | Light touch only
 
-### Session 1: Top Exam Traps (30 min)
 Run through these without looking anything up. These are the highest-yield "gotcha" items across all domains:
 
 **D1 Traps:**
@@ -121,105 +111,12 @@ Run through these without looking anything up. These are the highest-yield "gotc
 - WIP Allow Override: user can override the block BUT action is logged — not a silent bypass
 - Available app: user must have Company Portal installed and manually install — not auto-deployed
 
-### Session 2: Final Anki + Exam Logistics (30 min)
-
-**Anki:** Review all "Again" cards from the past week. Nothing else.
-
-**Exam logistics checklist:**
-- [ ] Exam booking confirmed — Pearson VUE confirmation email received
-- [ ] Exam format: Pearson OnVUE (online proctored) or test centre?
-  - **Online:** quiet room, no second monitor, webcam required, ID visible to camera, clear desk
-  - **Test centre:** arrive 15 min early, government-issued photo ID, no personal items at desk
-- [ ] ID ready: government-issued photo ID (passport or driving licence)
-- [ ] If online: test system check at [home.pearsonvue.com/op/StandaloneSystemCheck-APT](https://home.pearsonvue.com/op/StandaloneSystemCheck-APT)
-- [ ] Start time confirmed — set two alarms
-- [ ] Know the break policy: no scheduled breaks for 120-min exam; raise hand (test centre) or pause request (online) if urgent
-
-### Evening before exam
-- Stop studying by 8pm
-- Light walk or activity — no screens for 30 min before bed
-- Sleep target: 7+ hours
+### Anki + logistics
+- Review all "Again" cards from the past week. Nothing else.
+- If MD-102 isn't booked yet, book it now — see `week-08.md` for the logistics checklist.
 
 ---
 
-## Tuesday Aug 18 — MD-102 EXAM DAY
+## Rest of the week
 
-**Target time:** Check your booking confirmation
-
-### Morning checklist (2 hours before exam)
-- [ ] Eat — light meal, nothing heavy
-- [ ] Review only: top 3 exam traps per domain (printed or written on paper — discard before exam)
-- [ ] No new learning, no practice tests
-- [ ] Online: join Pearson OnVUE 30 min early; camera/mic check; clear desk; ID ready
-- [ ] Test centre: arrive 15 min early; leave phone/watch in car or locker
-
-### Exam strategy
-1. Read every question fully before selecting an answer — scenario questions have critical details in the last sentence
-2. Performance-based questions (lab simulations): click through carefully; no keyboard shortcuts work
-3. Flag any question you're unsure about — answer your best guess, flag, return at end
-4. Time check: at question 32, you should have ~60 min remaining; at question 50, ~35 min remaining
-5. Never leave a blank — all unanswered questions score 0; a guess has positive expected value
-
-### After the exam
-- Score reported immediately on screen (pass/fail + scaled score)
-- Official certificate email: 1–5 business days from Microsoft
-- If passed: screenshot the score report before it closes
-- If failed: note the domain score breakdown — retake eligibility: 24-hour wait after first fail, 14 days after second fail
-
----
-
-## Wednesday Aug 19 — Post-Exam Debrief
-
-**Hours:** 0.5h | Low effort — reflection only
-
-### Tasks
-1. Record result: pass/fail, scaled score, per-domain breakdown (if shown)
-2. Update GitHub profile README: change MD-102 status from 🔄 to ✅ (if passed) or add retake note
-3. If passed — note 3 things that went well during prep
-4. If failed — note which domains scored lowest; plan targeted review before retake
-5. Either way: take the rest of the day off. Exam week is physically and mentally draining.
-
----
-
-## Thursday Aug 20 — Transition Day
-
-**Hours:** 0h active study
-
-Apple exams: SUP-2026 (Aug 19) and DEP-2026 (Aug 20) may already be done by this point.
-
-Take stock of where you are:
-- MD-102: done (pass or retake plan in place)
-- SUP-2026: done
-- DEP-2026: done or today
-
-If DEP-2026 is today — follow the Apple week-07 exam day checklist.
-
----
-
-## Friday Aug 21 — Wrap-Up
-
-**Hours:** 0.5h | Reflection + next steps
-
-### Tasks
-1. Update GitHub Certifications repo README with final status for all certs
-2. Update GitHub profile README with completed badges
-3. Reflect on 7-week plan:
-   - What worked well?
-   - What would you change if doing it again?
-4. If any cert failed: plan retake timeline (earliest retake dates, target prep time)
-5. Post in GitHub profile or LinkedIn if passed — recruiter visibility was the original goal
-
----
-
-## Week 7 Summary Card
-
-| Day | Hours | Activity |
-|-----|-------|----------|
-| Sat Aug 15 | 2h | Cold recall across all 4 domains — find last weak spots |
-| Sun Aug 16 | 0h | REST |
-| Mon Aug 17 | 1.5h | Top exam traps review + full logistics check |
-| Tue Aug 18 | — | **MD-102 EXAM DAY** |
-| Wed Aug 19 | 0.5h | Post-exam debrief, score record, README update |
-| Thu Aug 20 | 0h | Transition / DEP-2026 exam day (see Apple week-07) |
-| Fri Aug 21 | 0.5h | Full wrap-up + next steps |
-| **Total** | **~4.5h** | |
+No new content, no exam this week. Use any remaining short sessions for weak-card Anki review only. Exam day, morning checklist, and post-exam debrief are all in `week-08.md`.
