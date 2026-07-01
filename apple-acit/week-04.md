@@ -16,6 +16,17 @@
 
 ---
 
+## Hands-On Lab (real device, this week)
+
+On the 2nd MacBook Pro — this is the best week to actually enable FileVault since it's safe on a spare device you control:
+
+1. System Settings → Privacy & Security → FileVault → Turn On. Save the personal recovery key somewhere durable (not just on the device itself).
+2. Terminal: `fdesetup status` — watch encryption progress move from "in progress" to complete.
+3. Once complete: `fdesetup list` — confirm which user(s) can unlock. If there's only one macOS account on the device, this list has one entry — matches the "multi-user FileVault" exam scenario where additional users would need to be added explicitly.
+4. System Information → confirm this device has no T2 chip (Apple Silicon) — Secure Enclave is built into the SoC, which is why storage was already hardware-encrypted before you even turned FileVault on.
+
+---
+
 ## Saturday Jul 25 — FileVault Management + Recovery Key Escrow
 
 **Hours:** 1.5h
@@ -187,3 +198,17 @@ No study. Full rest day.
    - ✅ FileVault management, T2/Secure Enclave, Diagnostics reference codes (Week 4)
    - 🔜 Week 5: DEP-2026 — ABM, ADE, supervision, MDM enrollment (new cert track)
 3. Flag any SUP-2026 topics not yet covered — note for Week 5 or 6 review
+
+---
+
+## SUP-2026 Exam — Book When Ready
+
+No hard date. Once the coverage check above is all green and self-checks feel solid, book it — don't wait for Week 7. Booking early:
+- Frees Weeks 5–6 to focus purely on DEP-2026 without lingering SUP-2026 review competing for attention
+- Uses momentum from just-finished content instead of letting it fade
+
+### Logistics checklist (when you book)
+- [ ] Provider: Kryterion online proctoring or Apple-authorised test centre
+- [ ] If online: system check completed, quiet room, webcam, ID visible, clear desk
+- [ ] Government-issued photo ID ready
+- [ ] Confirm booking email received before the day
