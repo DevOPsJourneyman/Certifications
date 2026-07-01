@@ -16,6 +16,17 @@
 
 ---
 
+## Hands-On Lab (Kambi's real Intune + ABM tenant, this week)
+
+This is DEP-2026's actual lab — Kambi already runs Apple devices through Intune + ABM. Read-only observation on production; don't change assignment or settings on devices you don't own the test for.
+
+1. In Kambi's Apple Business Manager portal: find your own account's role. Note which role(s) exist in the org (Administrator, Device Enrollment Manager, Content Manager, People Manager, MDM Server Admin, Viewer) and who holds Administrator.
+2. In Kambi's Intune console: find the Apple MDM Push certificate (Devices → Enrollment → Apple → MDM Push certificate) and the Enrollment Program Token (ABM/ASM token, if you have access) — this is the link between Intune and ABM.
+3. Find the 2nd MacBook Pro's device record in ABM. Confirm its current status ("Awaiting deployment") and which MDM server (Intune) it's assigned to. This device is your live example of "assigned before first power-on" — the exact zero-touch scenario the exam describes.
+4. If Managed Apple IDs are in use at Kambi, check whether they're federated with Entra ID — note it either way, it's a real answer to a common exam question.
+
+---
+
 ## Saturday Aug 1 — Apple Business Manager (ABM)
 
 **Hours:** 1.5h
@@ -205,4 +216,4 @@ No study. Full rest day.
    - ✅ Enrollment types: User Enrollment vs Device Enrollment vs ADE (Week 5)
    - ✅ Configuration profiles: types, delivery, removal behavior (Week 5)
    - 🔜 Week 6: Config profiles deep-dive, DDM, VPP management, final review
-3. Book Apple exams if not already done — target: Aug 19–20
+3. If the 2nd MacBook Pro has deployed this week, note what actually happened vs the ADE flow on paper — that comparison is worth more than another self-check.
