@@ -16,6 +16,14 @@
 
 ---
 
+## Hands-On Lab (Kambi's real Intune + ABM tenant, this week)
+
+1. In Kambi's Intune console, open an existing Mac configuration profile (any one already deployed) — identify which payload types it uses (Restrictions, Wi-Fi, Certificate, etc.) and check whether any setting is supervised-only.
+2. Check the 2nd MacBook Pro's ABM/Intune status again. If it has deployed since last week: screenshot or note the real enrollment flow you observed (activation → ABM check → Intune contact → supervision) — this is the single best reinforcement of this week's DDM/ADE content, better than another self-check question.
+3. If you have visibility into it, check whether Kambi's Intune tenant shows any DDM-related settings for Mac/iOS. Intune's DDM support is partial compared to some MDMs — note whatever you actually find as of now, that's a real, current answer, not a guess from a training doc.
+
+---
+
 ## Saturday Aug 8 — Configuration Profile Payloads in Depth
 
 **Hours:** 1.5h
@@ -232,24 +240,14 @@ No study. Full rest day.
 
 ---
 
-## Friday Aug 14 — Final Anki Review + Apple Exam Prep
+## Friday Aug 14 — Final Anki Review + DEP-2026 Coverage Check
 
 **Hours:** 0.5h | Office — Anki only
 
 ### Tasks
 1. Full Anki review: all Apple Weeks 1–6 decks
-2. DEP-2026 + SUP-2026 complete coverage check:
-   - **SUP-2026 (Device Support):** Hardware ID, ports, Apple Silicon vs Intel (W1) ✅ | Startup keys, Recovery, Safe Mode, DFU, reinstall (W2) ✅ | Apple Diagnostics, Console.app, FileVault intro (W3) ✅ | FileVault management, T2/Secure Enclave, Diagnostics codes (W4) ✅
-   - **DEP-2026 (Deployment & Management):** ABM, ADE, supervision, enrollment types (W5) ✅ | Config profile payloads, DDM, VPP (W6) ✅
-3. Confirm Apple exam bookings: SUP-2026 and DEP-2026 scheduled for Aug 19–20
-4. SUP-2026 exam traps cold recall:
-   - T2 firmware password: Apple service required — no user/MDM reset
-   - DFU mode: device fully powered off state; no software visible; iTunes/Finder restores OS
-   - FileVault multi-user: only enabled users can unlock at startup; others wait
-   - `fdesetup status` vs `fdesetup list`: status = on/off + progress; list = enabled users
-5. DEP-2026 exam traps cold recall:
-   - `PayloadRemovalDisallowed`: only enforced on supervised devices
-   - User Enrollment: no serial number, no full wipe, no device-based CA compliance
-   - Two profiles same payload type: most restrictive wins (not an error — unlike Intune)
-   - DDM minimum: macOS 13 / iOS 16 — older devices fall back to legacy MDM
-   - Device-based VPP: no Apple ID on device required — correct choice for shared/kiosk
+2. SUP-2026 + DEP-2026 complete coverage check:
+   - **SUP-2026 (Device Support):** Hardware ID, ports, Apple Silicon vs Intel (W1) ✅ | Startup keys, Recovery, Safe Mode, DFU, reinstall (W2) ✅ | Apple Diagnostics, Console.app, FileVault intro (W3) ✅ | FileVault management, T2/Secure Enclave, Diagnostics codes (W4) ✅ | **Exam:** should already be booked or taken by now (flexible, targeted after Week 4)
+   - **DEP-2026 (Deployment & Management):** ABM, ADE, supervision, enrollment types (W5) ✅ | Config profile payloads, DDM, VPP (W6) ✅ | **Exam:** Week 9
+3. Week 7 is DEP-2026 final review only (no new content, no exam). MD-102 exam is Week 8. DEP-2026 exam is Week 9.
+4. Confirm SUP-2026 result if taken; if not yet taken, don't let it drift — book it now.
