@@ -5,6 +5,8 @@
 **Focus:** Mac hardware identification, ports, Apple Silicon vs Intel, startup keys
 **Cert:** Apple Certified Support Professional — Device Support (SUP-2026)
 
+**Lab device:** 2nd Apple Silicon MacBook Pro (not Newton — that's the production AI server, don't reboot/recover/DFU it). Both available test units are Apple Silicon — Intel-only content below (T2 chip, Boot Camp, Cmd+S) has no hands-on unit; treat as exam-knowledge only.
+
 ---
 
 ## Daily Session Template
@@ -12,6 +14,15 @@
 1. **Read** (varies) — Apple training material or topic notes
 2. **Self-check** (10 min) — 3–4 exam-style questions
 3. **Anki update** (5 min) — add cards for today's key facts
+
+---
+
+## Hands-On Lab (real device, this week)
+
+1. On the 2nd MacBook Pro: System Information → Overview → confirm Chip (should read Apple M1 or M2)
+2. Terminal: `system_profiler SPHardwareDataType` — cross-check Model Identifier + serial format against notes
+3. Physically inspect the ports on the device — count/identify Thunderbolt vs USB-C vs any other connector, then confirm against System Information → the exact Thunderbolt/USB spec it reports
+4. Non-destructively: hold Power to reach Startup Options — observe the screen, do NOT select anything that erases or reinstalls — just confirm what's on it (Continue, Options, shutdown), then power off normally
 
 ---
 
