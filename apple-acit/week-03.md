@@ -22,6 +22,16 @@ If Week 2 Apple self-checks scored well and hardware/recovery topics feel solid 
 
 ---
 
+## Hands-On Lab (real device, this week)
+
+On the 2nd MacBook Pro:
+
+1. Run Apple Diagnostics for real — power off, then hold D at power-on. Record the actual result: "No issues found" or a reference code. Note how long it takes.
+2. Open Console.app (`/Applications/Utilities/Console.app`). Browse "All Messages" and the "Crash Reports" section for a minute — find one real log entry and identify its process name and timestamp.
+3. In Terminal, run `fdesetup status` — read-only check, note current FileVault state (likely off if this is a freshly-assigned device). Don't enable/disable yet — that's Week 4's lab.
+
+---
+
 ## Saturday Jul 18 — Apple Diagnostics
 
 **Hours:** 1.5h
