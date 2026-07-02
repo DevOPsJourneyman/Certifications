@@ -1,62 +1,60 @@
-# Week 2 — Apple SUP-2026: Recovery Modes + macOS Reinstall
+# Week 2 — Apple SUP-2026: iPhone + iPad Support
 
 **Dates:** Jul 11 – Jul 17, 2026
-**Target hours:** ~4.5h (30% of weekly target)
-**Focus:** Recovery modes, Safe Mode, DFU, macOS reinstall via Recovery
-**Cert:** Apple Certified Support Professional — Device Support (SUP-2026)
+**Target hours:** ~7h
+**Focus:** iPhone/iPad backup + restore, update/reset options, cellular + hotspot, Activation Lock, Stolen Device Protection, Lockdown Mode, sysdiagnose
+**Cert:** Apple Certified Support Professional — Apple Device Support Exam (SUP-2026)
+**Course modules:** Setup, Backup, and Recovery for iPhone or iPad; Managing Cellular Connections; device security features
+
+**Lab devices:** personal iPhone if available (all tasks non-destructive). No iPhone → exam-knowledge; study the course article screenshots carefully — the exam tests Settings paths.
 
 ---
 
 ## Daily Session Template
 
 1. **Review** (5 min) — Anki cards from Week 1
-2. **Read** (varies) — Apple training material or topic notes
+2. **Read** (varies) — course article(s) + Check Your Understanding questions
 3. **Self-check** (10 min) — 3–4 exam-style questions
 4. **Anki update** (5 min) — add cards for today's key facts
 
 ---
 
-## Hands-On Lab (real device, this week)
+## Hands-On Lab (this week, iPhone if available)
 
-On the 2nd MacBook Pro (spare unit, not Newton):
-
-1. Boot into macOS Recovery for real (hold Power → Startup Options → Options → Continue) — explore Disk Utility, Startup Security Utility, Firmware Password Utility. Don't erase or reinstall — just navigate and confirm what each screen shows, then restart normally.
-2. Boot into Safe Mode (Startup Options → hold Shift → Continue in Safe Mode) — confirm it boots, note the login screen says "Safe Boot" in the top corner, then restart normally.
-3. Optional/only if comfortable: try `nvram boot-args=-v` from Terminal (in a normal boot) then reboot to see verbose-style output on Apple Silicon — revert with `nvram -d boot-args` afterward.
-4. Skip DFU mode hands-on this week unless you have a second Mac + cable free to be the "host" — DFU requires Apple Configurator 2 on another machine and is higher-risk to practice casually. Fine to leave as exam-knowledge only for now.
+1. Settings → [Your Name] → iCloud → iCloud Backup — check state, last backup, backup size breakdown per app
+2. Connect iPhone to the spare MacBook Pro → Finder → device sidebar — observe local backup option (encrypted checkbox), Manage Backups
+3. Settings → General → Transfer or Reset iPhone — read every option (Reset vs Erase All Content and Settings) without tapping through
+4. Settings → Personal Hotspot — enable, join from the MacBook, then troubleshoot-walk: what would you check if a client couldn't see the hotspot?
+5. Generate a sysdiagnose on iOS: hold Vol+ + Vol− + Power ~1.5s (device vibrates) → Settings → Privacy & Security → Analytics & Improvements → Analytics Data → sysdiagnose file appears after a few minutes
 
 ---
 
-## Saturday Jul 11 — macOS Recovery Modes
+## Saturday Jul 11 — Backup + Restore (iCloud and Mac)
 
-**Hours:** 1.5h
+**Hours:** 2.5h
 
 ### Topics
-- **macOS Recovery (Apple Silicon):**
-  - Hold Power button → Startup Options → Options → Continue
-  - Contains: Reinstall macOS, Disk Utility, Safari, Terminal, Startup Security Utility, Firmware Password Utility
-  - Recovery OS stored on internal storage (not internet-dependent for local recovery)
-- **macOS Recovery (Intel):**
-  - Cmd+R: local Recovery (same version of macOS as installed)
-  - Cmd+Opt+R: Internet Recovery → latest compatible macOS
-  - Shift+Cmd+Opt+R: Internet Recovery → version shipped with Mac or closest available
-- **Recovery Partition:** hidden APFS volume on internal SSD — not visible in Finder or Disk Utility
-- **Startup Security Utility (in Recovery):** Full Security / Reduced Security / Permissive Security; controls allowed boot OS
-- **Reinstall macOS from Recovery:** preserves user data and apps when reinstalling over existing installation
+- **iCloud Backup:** automatic when locked + charging + Wi-Fi (or 5G on supported models); includes app data, settings, Home Screen, purchase history; excludes already-synced iCloud data
+- **Backup to Mac (Finder) / PC (Apple Devices app):** full local backup; **encrypted backup** required to include Health, Keychain, saved passwords, call history — password set by user, unrecoverable if lost
+- **Restore paths:** during Setup Assistant (iCloud / computer backup / direct transfer) or via Finder restore
+- **Restore vs Update in Finder:** Update reinstalls iOS keeping data; Restore erases then reinstalls
+- **Recovery mode (iPhone):** device with corrupted iOS — connect to computer + button sequence → Finder offers Update/Restore
+- **DFU on iPhone:** deepest restore, firmware level — last resort before service
+- Organizations: MDM can restrict which backup methods are available
 
 ### Self-Check
-1. A user's macOS installation is corrupted. They want to reinstall macOS without losing user data. What tool and option do they use?
-2. On Intel: Cmd+Opt+R vs Shift+Cmd+Opt+R — what is the difference in macOS version installed?
-3. Startup Security Utility is located where? How is it accessed?
-4. A MacBook Pro M2's recovery partition is deleted. Can the user still boot to Recovery?
-5. After using Recovery to reinstall macOS, what happens to user documents and applications?
+1. A user's encrypted local backup includes which data categories that an unencrypted one omits?
+2. iCloud Backup runs automatically when which three conditions are met?
+3. A user forgot their encrypted-backup password. Can Apple or the tech recover the backup?
+4. In Finder, what's the difference between Update and Restore for a malfunctioning iPhone?
+5. A user restores an iCloud backup and their photos are missing. They used iCloud Photos. Where are the photos?
 
 ### Anki Cards to Build
-- Apple Silicon Recovery: hold Power → Startup Options → Options
-- Intel Recovery shortcuts: Cmd+R (local), Cmd+Opt+R (latest compatible), Shift+Cmd+Opt+R (shipped version)
-- Recovery partition: hidden APFS volume — always present unless manually deleted
-- Startup Security Utility: Full (default, requires Apple-signed OS) / Reduced / Permissive
-- macOS reinstall from Recovery: preserves user data if installed over existing macOS
+- Encrypted local backup adds: Health, Keychain/passwords, call history, Wi-Fi settings
+- iCloud Backup auto-runs: locked + power + Wi-Fi
+- Encrypted-backup password lost = backup unusable (no recovery)
+- Finder Update = keep data; Restore = erase + reinstall
+- iCloud Photos data isn't inside iCloud Backup — it re-syncs after restore
 
 ---
 
@@ -66,79 +64,65 @@ No study. Full rest day.
 
 ---
 
-## Monday Jul 13 — Safe Mode + Verbose Boot + Single User Mode
+## Monday Jul 13 — Update + Reset Options, Cellular + Hotspot
 
-**Hours:** 1.5h
+**Hours:** 2h
 
 ### Topics
-- **Safe Mode (Intel):** hold Shift at startup → loads minimal kernel extensions, runs fsck, clears font/kernel caches
-- **Safe Mode (Apple Silicon):** Startup Options → hold Shift → click Continue in Safe Mode
-- **What Safe Boot does:** disables third-party kexts, login items, startup items; checks startup disk with fsck
-- **Verbose mode (Intel):** Cmd+V at startup — shows boot log in real time; useful for diagnosing boot failures
-- **Verbose mode (Apple Silicon):** not available the same way; use Recovery Terminal or `nvram boot-args=-v`
-- **Single User Mode (Intel only):** Cmd+S → drops to BSD shell with root access; not available on Apple Silicon
-- **Diagnosing with Safe Mode:** if issue disappears in Safe Mode → likely third-party kext or login item
+- **Software updates (iOS/iPadOS):** Settings → General → Software Update; automatic updates; Rapid Security Responses; beta enrollment; MDM can defer updates (org context)
+- **Reset menu** (Settings → General → Transfer or Reset): Reset All Settings (keeps data), Reset Network Settings, Reset Keyboard Dictionary, Reset Home Screen, Reset Location & Privacy — vs **Erase All Content and Settings** (full wipe, triggers Activation Lock check)
+- **Cellular:** physical SIM vs eSIM; eSIM transfer between iPhones; Dual SIM; carrier settings updates; cellular data options (roaming, 5G modes); APN via profile in managed environments
+- **Personal Hotspot:** requirements (carrier plan support), connection methods (Wi-Fi, Bluetooth, USB), Instant Hotspot via Continuity, common failures: carrier plan, iCloud account mismatch for Instant Hotspot, Wi-Fi radio state
 
 ### Self-Check
-1. A user reports the Mac is slow and crashes after login. You boot into Safe Mode and the issue does not occur. What is the most likely cause?
-2. How is Safe Mode initiated on an Apple Silicon Mac (step by step)?
-3. Single User Mode is available on Apple Silicon: True or False?
-4. Safe Mode runs `fsck` on the startup disk. What does `fsck` do?
-5. Verbose mode on Intel: what information does it display that normal startup hides?
+1. A user's iPhone has flaky Wi-Fi on every network. Data must be preserved. Which reset is appropriate?
+2. Reset All Settings vs Erase All Content and Settings — what survives each?
+3. A user gets a new iPhone and wants their number moved without a physical SIM. What feature does this?
+4. Personal Hotspot doesn't appear in Settings at all. Most likely cause?
+5. What is a carrier settings update and when does it prompt?
 
 ### Anki Cards to Build
-- Safe Mode Intel: hold Shift at startup
-- Safe Mode Apple Silicon: hold Shift in Startup Options
-- Safe Mode: disables third-party kexts + login items + startup items; runs fsck
-- Single User Mode (Cmd+S): Intel only — not on Apple Silicon
-- Verbose mode: Cmd+V (Intel) / nvram boot-args=-v (Apple Silicon workaround)
+- Reset Network Settings: wipes Wi-Fi passwords, VPN, cellular prefs — keeps user data
+- Reset All Settings: all settings reset, no data loss; Erase All Content = full wipe
+- eSIM: digital SIM, transferable device-to-device, multiple profiles storable
+- Hotspot missing from Settings = carrier plan doesn't include it
+- Instant Hotspot: Continuity feature — same Apple Account on both devices
 
 ---
 
-## Tuesday Jul 14 — DFU Mode + macOS Reinstall via Internet Recovery
+## Tuesday Jul 14 — Device Security: Activation Lock, Stolen Device Protection, Lost Mode, Lockdown Mode
 
 **Hours:** 1h
 
 ### Topics
-- **DFU (Device Firmware Update) mode:**
-  - Apple Silicon: hold Power + Volume Down → continue holding → Apple logo appears → release Volume Down (keep holding Power)
-  - Intel: specific key sequence per model; used when normal recovery is inaccessible
-  - DFU restores firmware/OS via Apple Configurator 2 (connected Mac required)
-  - Use case: Mac with corrupted firmware, stuck bootloop, or unresponsive to Recovery
-- **Internet Recovery:**
-  - Loads Recovery OS from Apple servers — fallback when local Recovery partition is missing or damaged
-  - Requires Wi-Fi or Ethernet; may take 10–30 min to load
-  - Intel: Cmd+Opt+R (latest compatible) or Shift+Cmd+Opt+R (shipped version)
-  - Apple Silicon: if local Recovery is unavailable, Startup Options automatically falls back to Internet Recovery
-- **Reinstall macOS (clean install):** Disk Utility → Erase volume → then Reinstall macOS — removes all data
-- **Reinstall macOS (upgrade/repair):** Reinstall without erasing — preserves user data
+- **Activation Lock:** enabled automatically with Find My; ties device to Apple Account; survives erase — blocks reactivation without owner credentials; org devices: MDM/ABM can clear Activation Lock (supervised) — support scenario: second-hand device locked to previous owner
+- **Stolen Device Protection (iPhone):** when away from familiar locations, sensitive actions require biometrics with no passcode fallback + security delay for critical changes (e.g., Apple Account password change)
+- **Managed Lost Mode:** MDM marks supervised device lost — locks, shows message/phone, can report location; user-level Lost Mode via Find My for personal devices
+- **Lockdown Mode:** extreme optional protection against targeted spyware — blocks most attachments, link previews, some web tech; support impact: users may report "broken" features that Lockdown Mode intentionally disables
 
 ### Self-Check
-1. A MacBook Pro M3 has a corrupted firmware and won't respond to holding Power at startup. What recovery method requires another Mac and a cable?
-2. Internet Recovery on Intel: what is the difference in macOS version between Cmd+Opt+R and Shift+Cmd+Opt+R?
-3. To perform a clean erase-and-reinstall via Recovery, what is the correct order of steps?
-4. DFU mode on Apple Silicon requires which external tool to restore?
-5. An Apple Silicon Mac's local Recovery partition is missing. A user boots it. What happens?
+1. A user buys a second-hand iPhone that asks for the previous owner's Apple Account after erase. What feature is this and what are the resolution paths?
+2. Stolen Device Protection is on. A thief knows the passcode and tries to change the Apple Account password at a coffee shop. What stops them?
+3. What's the difference between Lost Mode (Find My) and Managed Lost Mode (MDM)?
+4. A user in Lockdown Mode reports image attachments not arriving in Messages. Fault or feature?
 
 ### Anki Cards to Build
-- DFU mode: firmware-level restore via Apple Configurator 2 — requires another Mac
-- DFU use case: corrupted firmware / unresponsive to Recovery
-- Internet Recovery fallback: automatic on Apple Silicon if local Recovery missing
-- Clean reinstall: Disk Utility Erase → then Reinstall macOS
-- Repair reinstall: Reinstall macOS without erasing (preserves user data)
+- Activation Lock: auto with Find My; survives erase; cleared by owner sign-out, proof-of-purchase via Apple, or MDM (supervised)
+- Stolen Device Protection: biometric-only + security delay away from familiar locations
+- Managed Lost Mode: MDM, supervised — lock + message + location
+- Lockdown Mode: optional extreme protection — intentionally degrades features
 
 ---
 
-## Wednesday Jul 15 — Review + Self-Check
+## Wednesday Jul 15 — Sysdiagnose + iOS Troubleshooting Flow
 
 **Hours:** 0.5h | Office
 
-### Tasks
-1. Anki review: all Apple Week 2 cards built so far
-2. 3 mixed questions:
-   - A user can't get past the Apple logo on an Intel Mac. List 3 things you would try in order.
-   - On Apple Silicon, what is the equivalent of Intel's Cmd+R (local Recovery)?
-   - When would you use DFU mode instead of Recovery mode?
+1. Topics: sysdiagnose capture on iOS (button chord → Analytics Data), when support asks for it; general iOS troubleshooting order: restart → update → settings reset → restore
+2. 3 questions:
+   - What's the button combination to trigger a sysdiagnose on iPhone, and where does the file land?
+   - A user's iPhone app crashes repeatedly. Order the escalation steps from least to most invasive.
+   - Which reset would you try before a full erase for persistent cellular issues?
 
 ---
 
@@ -146,12 +130,11 @@ No study. Full rest day.
 
 **Hours:** 0.5h | Office
 
-### Tasks
-1. Revisit gaps from Wed
-2. 3 more questions:
-   - After booting into Safe Mode and the issue disappears, what is your next diagnostic step?
-   - macOS Recovery → Terminal. A user erased the wrong volume. Is recovery possible?
-   - Explain the Startup Security Utility settings (Full / Reduced / Permissive) and when each applies.
+1. Revisit gaps + course Check Your Understanding questions for iPhone/iPad modules
+2. 3 questions:
+   - Encrypted vs unencrypted backup: a user switching iPhones wants Health data moved via local backup. What must they do?
+   - An employee leaves and their supervised iPad is Activation Locked to their personal Apple Account. What can IT do?
+   - eSIM transfer fails during Quick Start. What are two manual fallback paths?
 
 ---
 
@@ -159,7 +142,6 @@ No study. Full rest day.
 
 **Hours:** 0.5h | Office — Anki only
 
-### Tasks
-1. Full review of Apple Week 1 + Week 2 Anki decks
-2. Flag weak areas (likely: DFU steps, Intel vs Apple Silicon recovery key differences)
-3. Note topics to carry into Week 3 catchup if needed
+1. Full review: Apple Weeks 1–2 decks
+2. Flag weak areas — likely: reset-option distinctions, Activation Lock resolution paths
+3. Confirm labs done: backup inspection, hotspot test, sysdiagnose capture
