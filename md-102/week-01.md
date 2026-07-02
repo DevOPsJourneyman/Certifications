@@ -33,10 +33,11 @@
 - [Set up Windows Autopilot](https://learn.microsoft.com/en-us/training/modules/set-up-windows-autopilot/)
 
 ### Lab Tasks
-1. Devices → Enrollment → Windows Autopilot → import device (CSV with fake hardware hash)
-2. Create Autopilot deployment profile: user-driven, AAD join, skip EULA = Yes, skip privacy = Yes
+1. **HP laptop #1 (real hardware):** reset to OOBE if needed, then extract the real hardware hash — `Install-Script Get-WindowsAutoPilotInfo; Get-WindowsAutoPilotInfo -OutputFile hash.csv` — and import it into Devices → Enrollment → Windows Autopilot
+2. Create Autopilot deployment profile: user-driven, AAD join, skip EULA = Yes, skip privacy = Yes — assign to the HP device
 3. Create Enrollment Status Page profile: block device use until required apps installed
-4. Verify profile assignment in Devices → Enrollment → Deployment profiles
+4. **Run the enrollment for real:** boot the HP through OOBE → watch Autopilot pull the profile → observe every ESP phase (device prep / device setup / account setup). This end-to-end run is worth more than any number of console screenshots — the exam's performance-based questions assume you've seen it.
+5. Verify profile assignment in Devices → Enrollment → Deployment profiles; find the enrolled HP under Devices → Windows
 
 ### Self-Check
 1. A technician runs pre-provisioning (white glove). What does the **technician phase** accomplish before the device reaches the end user?
