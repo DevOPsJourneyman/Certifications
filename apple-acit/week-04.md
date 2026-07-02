@@ -1,71 +1,61 @@
-# Week 4 — Apple SUP-2026: FileVault Deep-Dive + T2 / Secure Enclave + Apple Diagnostics
+# Week 4 — Apple SUP-2026: Networking + Security + Updates/Storage/Continuity → Practice Exam Gate
 
 **Dates:** Jul 25 – Jul 31, 2026
-**Target hours:** ~4.5h (30% of weekly target)
-**Focus:** FileVault management, T2 chip security model, Secure Enclave, Apple Diagnostics reference codes
-**Cert:** Apple Certified Support Professional — Device Support (SUP-2026)
+**Target hours:** ~7h
+**Focus:** Network configuration + troubleshooting, Mac app security (Gatekeeper/notarization/XProtect/SIP), privacy + sharing, software updates, storage, Continuity — then the paid practice exam as the booking gate
+**Cert:** Apple Certified Support Professional — Apple Device Support Exam (SUP-2026)
+**Course modules:** Managing Network Connections; Managing Privacy, Security, and Sharing; Software Updates, Device Storage, and Continuity
+
+**Lab device:** spare Apple Silicon MacBook Pro + iPhone if available.
 
 ---
 
 ## Daily Session Template
 
 1. **Review** (5 min) — Anki cards from Weeks 1–3
-2. **Read** (varies) — Apple training material or topic notes
+2. **Read** (varies) — course article(s) + Check Your Understanding questions
 3. **Self-check** (10 min) — 3–4 exam-style questions
-4. **Anki update** (5 min) — new cards for today
+4. **Anki update** (5 min) — add cards for today's key facts
 
 ---
 
-## Hands-On Lab (real device, this week)
+## Hands-On Lab (this week)
 
-On the 2nd MacBook Pro — this is the best week to actually enable FileVault since it's safe on a spare device you control:
-
-1. System Settings → Privacy & Security → FileVault → Turn On. Save the personal recovery key somewhere durable (not just on the device itself).
-2. Terminal: `fdesetup status` — watch encryption progress move from "in progress" to complete.
-3. Once complete: `fdesetup list` — confirm which user(s) can unlock. If there's only one macOS account on the device, this list has one entry — matches the "multi-user FileVault" exam scenario where additional users would need to be added explicitly.
-4. System Information → confirm this device has no T2 chip (Apple Silicon) — Secure Enclave is built into the SoC, which is why storage was already hardware-encrypted before you even turned FileVault on.
+1. System Settings → Network — identify interfaces and their order; create a new network **location**, switch to it, switch back (Apple menu → Location on older macOS; Network settings on Tahoe)
+2. Set service order manually — drag Wi-Fi below Ethernet (or USB-adapter) and confirm which interface routes traffic (`route get default` in Terminal)
+3. Terminal network tools: `ping`, `traceroute`, `dig apple.com`, `networkQuality` — run each, read output
+4. Gatekeeper walk: download a non-App-Store app → note the first-open prompt; System Settings → Privacy & Security → "Open Anyway" flow; `spctl --status` read-only check
+5. Privacy: System Settings → Privacy & Security — review Location Services, Camera, Mic, Full Disk Access lists; find which apps hold Full Disk Access
+6. Storage: System Settings → General → Storage — read the category breakdown + recommendations; compare `df -h` in Terminal
+7. Continuity: with iPhone nearby, test Handoff (Safari page) and Universal Clipboard between iPhone and Mac; note requirements (same Apple Account, Bluetooth, Wi-Fi on)
 
 ---
 
-## Saturday Jul 25 — FileVault Management + Recovery Key Escrow
+## Saturday Jul 25 — Networking on Apple Devices
 
-**Hours:** 1.5h
+**Hours:** 2.5h
 
 ### Topics
-- **Enabling FileVault:**
-  - System Settings → Privacy & Security → FileVault → Turn On
-  - Multi-user Mac: each user who should unlock FileVault must be enabled individually (Enable User button)
-  - Users not enabled: cannot unlock at startup — must wait for an enabled user to log in first
-- **Recovery key options:**
-  - **Personal recovery key:** 24-character alphanumeric key; user must store it securely
-  - **Institutional recovery key:** created via `security` command or Apple Configurator; stored by admin; allows org to decrypt any device
-  - **MDM escrow:** MDM solution can receive and store the personal recovery key automatically at enablement
-- **FileVault status commands:**
-  - `fdesetup status` → shows FileVault on/off + encryption progress
-  - `fdesetup list` → lists all users enabled to unlock FileVault
-  - `fdesetup remove -user username` → removes a user's ability to unlock
-  - `diskutil apfs list` → shows APFS volumes and encryption state
-- **Disabling FileVault:**
-  - System Settings → FileVault → Turn Off
-  - Decryption happens in background — fully usable during decryption
-  - Requires admin authentication to disable
-- **FileVault and MDM:**
-  - MDM (Jamf, Intune) can: enforce FileVault, escrow recovery key, defer enabling until user logs in, generate new recovery key
-  - Intune: endpoint protection profile → FileVault → require encryption, escrow key to Intune
+- **Network settings (macOS):** interfaces, service order (top active service wins for default route), locations (saved config sets), DHCP vs manual, DNS configuration
+- **Wi-Fi troubleshooting flow:** signal/interference → correct SSID/password → IP address sanity (169.254.x.x = DHCP failure) → DNS test → captive portal awareness → forget/rejoin network
+- **iOS network settings:** Wi-Fi private address (MAC randomisation — can break MAC-filtered corporate networks), Reset Network Settings as escalation
+- **VPN:** built-in client types, VPN configuration via app or profile; managed devices get VPN by profile — user symptom: VPN settings greyed/managed
+- **Test tools:** ping (reachability), traceroute (path), dig/nslookup (DNS), networkQuality (built-in speed test, macOS)
+- Captive portals, proxy basics, personal hotspot as diagnostic alternative path
 
 ### Self-Check
-1. A Mac has 3 user accounts. FileVault is enabled and only 1 user is set to unlock the disk. A second user turns on the Mac. What happens at startup?
-2. An admin wants to decrypt a managed Mac remotely without user involvement. What must have been set up before encryption?
-3. `fdesetup list` outputs only one username. What does this tell you?
-4. A user enabled FileVault and stored the personal recovery key. They have since forgotten their login password and lost the recovery key. What are the options?
-5. How do you check FileVault encryption progress from Terminal?
+1. A Mac has Wi-Fi and Ethernet both connected; traffic must prefer Ethernet. Where is this controlled?
+2. A device shows IP 169.254.20.5. What failed?
+3. Corporate Wi-Fi uses MAC filtering; a user's iPhone connects at home but not at work. What iOS 26 feature is the likely culprit?
+4. Which tool answers "is this a DNS problem?" fastest, and what would you run?
+5. A user's Mac loads some sites but not others on hotel Wi-Fi. First suspicion?
 
 ### Anki Cards to Build
-- Multi-user FileVault: only enabled users can unlock at startup — others must wait
-- `fdesetup status` → on/off + progress | `fdesetup list` → unlock-capable users
-- MDM escrow: MDM receives recovery key at enable time — must be configured BEFORE enable
-- Disabled FileVault user: cannot unlock disk, but can still log in after an enabled user has unlocked
-- Lost password + lost recovery key = data unrecoverable
+- Service order: topmost active service = default route
+- 169.254.x.x = self-assigned = DHCP failure
+- iOS Private Wi-Fi Address = per-network MAC randomisation — breaks MAC filtering
+- ping = reachability | traceroute = path | dig = DNS | networkQuality = throughput (macOS)
+- Network locations = saved configuration sets, switchable per site
 
 ---
 
@@ -75,140 +65,103 @@ No study. Full rest day.
 
 ---
 
-## Monday Jul 27 — T2 Chip Security Model + Secure Enclave
+## Monday Jul 27 — Security + Privacy: Gatekeeper, Notarization, XProtect, SIP, Privacy Controls, Sharing
 
-**Hours:** 1.5h
+**Hours:** 2h
 
 ### Topics
-- **T2 chip (Intel Macs, 2018+):**
-  - Combines: secure boot controller, encrypted storage controller, Touch ID security, System Management Controller (SMC), audio controller
-  - Secure Boot: ensures only Apple-signed macOS boots; three levels: Full (default), Reduced, Permissive
-  - Full Security: only current signed macOS version allowed; requires internet to verify at every boot (or cached certificate)
-  - Reduced Security: allows older or non-Apple-signed OS kernels
-  - Permissive Security: allows any software — required for booting Linux or certain third-party kexts
-  - USB/Thunderbolt boot restriction: by default, T2 Macs cannot boot from external volumes; enable in Startup Security Utility
-  - Firmware password: stored in T2; prevents boot from external media, Recovery Mode, and target disk mode without password
-  - Reset firmware password on T2 Mac: requires Apple service (service provider or Apple Store) — cannot be reset by user or MDM
-- **Secure Enclave (Apple Silicon and iPhone/iPad):**
-  - Dedicated coprocessor within the SoC (not a separate chip like T2)
-  - Stores: cryptographic keys for Touch ID/Face ID, Apple Pay, Keychain encryption
-  - Processes biometric data locally — biometric template never sent to Apple or apps
-  - Keys in Secure Enclave: cannot be extracted even with physical access to the device
-  - Data Protection: ties file encryption keys to Secure Enclave keys — no Secure Enclave = no data access
-- **T2 vs Secure Enclave comparison:**
-  - T2: separate chip (Intel Macs), handles encrypted storage + secure boot + SMC + audio
-  - Secure Enclave: coprocessor within SoC (Apple Silicon), handles key storage + biometrics only
-  - Apple Silicon: no T2 chip — Secure Enclave is built into M-series SoC; storage always encrypted via hardware
+- **Gatekeeper:** verifies downloaded apps are signed/notarized before first launch; user override path (Privacy & Security → Open Anyway); quarantine attribute
+- **Notarization:** Apple's automated malware scan for developer-distributed (non-App-Store) apps — notarized ≠ App-Store-reviewed
+- **XProtect:** built-in antimalware — signature detection, blocking, remediation; updates silently via Apple
+- **System Integrity Protection (SIP):** protects system files/processes even from root; disabled only via Recovery (`csrutil`) — support red flag if found off
+- **Privacy controls (TCC):** per-app permissions — camera, mic, screen recording, Full Disk Access, Accessibility; managed devices can have these pre-granted/denied by MDM
+- **Location Services:** system + per-app control, precise vs approximate
+- **Sharing settings (Mac):** Screen Sharing, File Sharing (SMB), Remote Login (SSH), AirDrop scope (Off/Contacts/Everyone 10 min)
+- **Stolen Device Protection + Lockdown Mode** (recap from Week 2 — cross-platform security picture)
 
 ### Self-Check
-1. A T2 Mac has Full Security enabled. An admin wants to boot from an external USB drive. What two changes must be made in Startup Security Utility?
-2. A user forgets the firmware password on their T2 MacBook Pro. The user cannot contact Apple. Can the firmware password be reset without Apple service?
-3. What is the primary difference between T2 chip and Secure Enclave in terms of their physical implementation?
-4. An M2 Mac has no T2 chip. How is the internal SSD encrypted?
-5. Secure Enclave stores biometric data (fingerprint image). Can this image be extracted by a forensic tool?
+1. A user downloads an app from a vendor site; macOS says it can't verify it's free of malware. What's the safe override path, and what should a tech check first?
+2. Notarized app vs Mac App Store app — what's the difference in Apple's review?
+3. What protects /System from modification by a root process, and how would it ever be disabled?
+4. An app can't see files in Documents despite being installed. Which setting gates this?
+5. A user must receive an AirDrop file from a visitor not in their contacts. What setting change, and what should they do after?
 
 ### Anki Cards to Build
-- T2 chip: Intel only — secure boot + encrypted storage + SMC + Touch ID + audio controller
-- T2 Secure Boot levels: Full (default) / Reduced / Permissive
-- T2 firmware password: requires Apple service to reset — no user/MDM reset
-- Secure Enclave: in-SoC coprocessor — key storage + biometrics (no storage controller)
-- Apple Silicon: no T2; Secure Enclave in M-series SoC; storage always encrypted via hardware
-- External boot on T2: disabled by default; enable in Startup Security Utility + change boot policy
+- Gatekeeper: signed + notarized check at first launch; Open Anyway = user override
+- Notarization = automated malware scan, NOT App Store review
+- XProtect: built-in AV — detect, block, remediate; silent updates
+- SIP: system files protected even from root; csrutil in Recovery only
+- TCC/Privacy: per-app Camera/Mic/Full Disk Access/Screen Recording grants
+- AirDrop: Off / Contacts Only / Everyone for 10 Minutes
 
 ---
 
-## Tuesday Jul 28 — Apple Diagnostics Reference Codes
+## Tuesday Jul 28 — Software Updates + Storage + Continuity
 
 **Hours:** 1h
 
 ### Topics
-- **Reference code format:** 3–4 letter prefix (component) + 3-digit number (specific fault)
-- **Common component prefixes:**
-  - `ADP` — general hardware
-  - `NDR` or `NDD` — storage (NVMe/SSD)
-  - `VFD` — video/graphics
-  - `PPT` — power/battery
-  - `MEM` — memory (RAM)
-  - `WL` — Wi-Fi
-  - `BT` — Bluetooth
-  - `FAN` — fan/thermal
-  - `PFM` — performance (may indicate thermal throttling)
-- **No issues found:** Apple Diagnostics shows "No issues found" — system passes
-- **After a positive code:**
-  1. Note the exact code
-  2. Run diagnostics again to confirm (transient errors can occur)
-  3. Share code with Apple Genius or Apple Authorized Service Provider (AASP)
-  4. Do NOT attempt to repair based on code alone — diagnostic code is a starting point, not a repair instruction
-- **Limitations of Apple Diagnostics:**
-  - Cannot diagnose all hardware faults (e.g. intermittent logic board issues may not trigger a code)
-  - Does not diagnose software, third-party peripherals, or firmware
-  - A clean result does NOT rule out hardware failure if symptoms persist
+- **Software updates:** macOS (System Settings → General → Software Update), iOS; automatic updates; Rapid Security Responses; orgs defer/enforce via MDM — user symptom: "Update managed by your organisation"
+- **Storage management:** built-in recommendations (Store in iCloud, Optimise Storage, Empty Bin automatically); storage categories; APFS awareness — snapshots can make "free space" look wrong; purgeable space
+- **Continuity family:** Handoff, Universal Clipboard, AirDrop, AirPlay, Sidecar (iPad as display), Continuity Camera (iPhone as webcam), iPhone Mirroring, Instant Hotspot — shared requirements: same Apple Account, Bluetooth + Wi-Fi on, proximity
+- Continuity troubleshooting: account mismatch is the #1 cause; then Bluetooth/Wi-Fi state, then feature-specific support matrix
 
 ### Self-Check
-1. Apple Diagnostics returns code `NDR001`. What component area does this indicate?
-2. A user's MacBook Pro M3 runs diagnostics and gets "No issues found." The user still reports random restarts. Does "No issues found" rule out hardware failure?
-3. An admin receives a reference code from a user. What is the recommended next step — repair the device or share the code with Apple service?
-4. Apple Diagnostics detects a fault with the GPU. The code starts with which 3-letter prefix?
-5. A MacBook Air runs Apple Diagnostics and returns a `WL` code. What hardware component is implicated?
+1. Handoff doesn't work between a user's iPhone and Mac. What are the first two checks?
+2. A Mac reports 40 GB free but a 20 GB copy fails for space. What APFS concept explains it?
+3. What does "Optimise Storage" offload, and when does it re-download?
+4. An org needs updates held for 2 weeks of testing. Where is that enforced — device or MDM?
+5. Name the Continuity feature that turns iPhone into a Mac webcam.
 
 ### Anki Cards to Build
-- `NDD`/`NDR` = storage (SSD/NVMe) | `VFD` = video | `PPT` = power/battery | `MEM` = memory
-- `WL` = Wi-Fi | `BT` = Bluetooth | `FAN` = fan/thermal | `PFM` = performance/throttling
-- "No issues found" ≠ hardware is definitely healthy — intermittent faults can evade diagnostics
-- After positive code: note code → run again to confirm → share with Apple service
+- Continuity requirements: same Apple Account + Bluetooth + Wi-Fi + proximity
+- Continuity #1 failure cause: different Apple Accounts on the two devices
+- Purgeable/snapshot space: free-space number can overstate usable space
+- MDM can defer OS updates — user sees "managed by organisation"
+- Continuity Camera = iPhone as Mac webcam; Sidecar = iPad as display
 
 ---
 
-## Wednesday Jul 29 — Review + Self-Check
+## Wednesday Jul 29 — Full SUP Review (all 9 areas)
 
 **Hours:** 0.5h | Office
 
-### Tasks
-1. Anki review: all Apple Week 4 cards
-2. 3 questions:
-   - FileVault is required by MDM policy. A user declines to enable it at login prompt. What happens on an MDM-enforced deployment?
-   - A T2 Mac is set to Permissive Security. What risks does this introduce?
-   - Apple Diagnostics returns `PPT001`. What component and what symptom might the user report?
+Cold-recall sweep — one question per area, no notes:
+1. Apple Account: two-factor trusted elements?
+2. iCloud: what's excluded from iCloud Backup and why?
+3. iPhone/iPad: encrypted local backup adds what?
+4. Mac accounts: password-reset path order?
+5. Startup/recovery: Erase All Content and Settings vs Disk Utility erase?
+6. Diagnostics: memory pressure red means?
+7. Networking: 169.254.x.x means?
+8. Security: notarization vs App Store review?
+9. Updates/Continuity: Handoff requirements?
+
+Failures → targeted Anki + article re-read tonight.
 
 ---
 
-## Thursday Jul 30 — Review + Self-Check
+## Thursday Jul 30 — SUP-2026 PRACTICE EXAM (paid — the booking gate)
+
+**Hours:** 2.5h | Uninterrupted block
+
+### Logistics
+- Sign in with Apple Account at **ACRS** (Apple Certification Records System) → Practice Exams → Apple Device Support Practice Exam → submit application → continue to **Pearson VUE** → pay → start
+- ~80 scored questions, 120 minutes, one sitting, no notes
+- Pass mark: **75%, not rounded**
+
+### Gate rule
+- **≥75% (pass):** book the real SUP-2026 exam via Pearson VUE for Week 5 (target Aug 3–7). Real exam = Pearson OnVUE online proctoring or test centre.
+- **65–74%:** book for late Week 5/early Week 6; patch the weak areas the score report shows — do NOT let it slide past Week 6, DEP needs the runway.
+- **<65%:** flag it in session notes immediately — schedule triage needed with MD-102 also in flight. Retake costs money and has a 7-day wait, so patch gaps hard before rebooking.
+
+---
+
+## Friday Jul 31 — Debrief + Anki
 
 **Hours:** 0.5h | Office
 
-### Tasks
-1. Revisit gaps from Wed
-2. 3 questions:
-   - `fdesetup status` returns "FileVault is On. Encryption in progress: 45% complete." Can the user still use the Mac?
-   - A forensic investigator obtains an M2 MacBook with no login credentials. The storage is removed. Can the data be decrypted on another machine?
-   - What is the T2 chip feature that restricts booting from external volumes?
-
----
-
-## Friday Jul 31 — Anki Review + SUP-2026 Progress Check
-
-**Hours:** 0.5h | Office — Anki only
-
-### Tasks
-1. Full review: Apple Weeks 1–4 Anki decks
-2. SUP-2026 coverage check so far:
-   - ✅ Hardware ID, ports, Apple Silicon vs Intel (Week 1)
-   - ✅ Startup keys, Recovery modes, Safe Mode, DFU, macOS reinstall (Week 2)
-   - ✅ Apple Diagnostics overview, Console.app, crash reports, FileVault intro (Week 3)
-   - ✅ FileVault management, T2/Secure Enclave, Diagnostics reference codes (Week 4)
-   - 🔜 Week 5: DEP-2026 — ABM, ADE, supervision, MDM enrollment (new cert track)
-3. Flag any SUP-2026 topics not yet covered — note for Week 5 or 6 review
-
----
-
-## SUP-2026 Exam — Book When Ready
-
-No hard date. Once the coverage check above is all green and self-checks feel solid, book it — don't wait for Week 7. Booking early:
-- Frees Weeks 5–6 to focus purely on DEP-2026 without lingering SUP-2026 review competing for attention
-- Uses momentum from just-finished content instead of letting it fade
-
-### Logistics checklist (when you book)
-- [ ] Provider: Kryterion online proctoring or Apple-authorised test centre
-- [ ] If online: system check completed, quiet room, webcam, ID visible, clear desk
-- [ ] Government-issued photo ID ready
-- [ ] Confirm booking email received before the day
+1. Log practice exam score + per-area weak spots
+2. Anki cards for every question you were unsure about
+3. Confirm SUP-2026 exam booked (or triage plan written)
+4. Week 5 starts DEP-2026 content regardless — SUP final polish rides along as Anki-only
