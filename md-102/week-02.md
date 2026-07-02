@@ -100,6 +100,7 @@ No study. Full rest day.
 ### Lab Tasks
 1. Compliance policy → Windows 10 and later: min OS 10.0.19041, password required (8 chars, complex), require BitLocker, require Defender real-time — assign to All Devices
 2. Set noncompliance actions: Day 0 = mark non-compliant; Day 3 = email user; Day 7 = remotely lock
+2b. **HP laptop (enrolled Week 1):** make it deliberately non-compliant (e.g. disable BitLocker or Defender real-time) → sync → watch it flip states in Devices → Monitor → Device compliance, then sign in as the test user and observe the CA block from Lab 4 fire for real
 3. Entra → Security → Identity Protection → Sign-in risk policy: Medium and above → require MFA → Report-only
 4. SSPR: Entra → Password reset → enable for pilot group, require 2 methods
 5. WHfB: Intune → Devices → Enrollment → Windows Hello for Business → Enable, require TPM, 6-digit PIN min
