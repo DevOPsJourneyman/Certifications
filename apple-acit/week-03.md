@@ -1,67 +1,67 @@
-# Week 3 — Apple SUP-2026: Diagnostics + FileVault Intro
+# Week 3 — Apple SUP-2026: Mac Support — Accounts, FileVault, Startup + Recovery, Diagnostics
 
 **Dates:** Jul 18 – Jul 24, 2026
-**Target hours:** ~4.5h (30% of weekly target)
-**Focus:** Apple Diagnostics, Console.app crash reports, FileVault fundamentals
-**Cert:** Apple Certified Support Professional — Device Support (SUP-2026)
+**Target hours:** ~7h
+**Focus:** Mac user account types, password reset, FileVault, startup modes, macOS Recovery, erase/reinstall, Apple Diagnostics, Activity Monitor, Console, sysdiagnose
+**Cert:** Apple Certified Support Professional — Apple Device Support Exam (SUP-2026)
+**Course modules:** Setup, Backup, and Recovery for Mac; Managing User Accounts and FileVault; Diagnosing Issues on Mac
 
----
+> This week condenses the old plan's Mac recovery/diagnostics/FileVault weeks — that content was on-syllabus, it just can't take 3 weeks anymore. No skip rule; there is no slack in the v2 schedule.
 
-## Skip Rule (mirrors MD-102 Week 3)
-
-If Week 2 Apple self-checks scored well and hardware/recovery topics feel solid → treat this week as light review + new FileVault intro only. Full catchup is optional.
+**Lab device:** spare Apple Silicon MacBook Pro. This is the week to use it hard — Recovery, Safe Mode, Diagnostics, FileVault are all safe on a spare unit.
 
 ---
 
 ## Daily Session Template
 
 1. **Review** (5 min) — Anki cards from Weeks 1–2
-2. **Read** (varies) — Apple training material or topic notes
+2. **Read** (varies) — course article(s) + Check Your Understanding questions
 3. **Self-check** (10 min) — 3–4 exam-style questions
-4. **Anki update** (5 min) — new cards for today
+4. **Anki update** (5 min) — add cards for today's key facts
 
 ---
 
-## Hands-On Lab (real device, this week)
+## Hands-On Lab (spare MacBook Pro, this week)
 
-On the 2nd MacBook Pro:
-
-1. Run Apple Diagnostics for real — power off, then hold D at power-on. Record the actual result: "No issues found" or a reference code. Note how long it takes.
-2. Open Console.app (`/Applications/Utilities/Console.app`). Browse "All Messages" and the "Crash Reports" section for a minute — find one real log entry and identify its process name and timestamp.
-3. In Terminal, run `fdesetup status` — read-only check, note current FileVault state (likely off if this is a freshly-assigned device). Don't enable/disable yet — that's Week 4's lab.
+1. **Recovery:** hold Power → Startup Options → Options → Continue. Explore Disk Utility, Startup Security Utility, Terminal, Reinstall option. Don't erase. Restart normally.
+2. **Safe Mode:** Startup Options → hold Shift → Continue in Safe Mode. Confirm "Safe Boot" at login, restart normally.
+3. **Apple Diagnostics:** power off → hold D at power-on. Record result/reference code and duration.
+4. **FileVault:** System Settings → Privacy & Security → FileVault → Turn On. Save the personal recovery key durably (not on the device). Then `fdesetup status` and `fdesetup list` in Terminal — watch progress, confirm enabled users.
+5. **Accounts:** create a second local Standard account. Confirm it can't unlock FileVault at boot until an enabled user has unlocked. Note the difference in System Settings → Users & Groups between Admin and Standard.
+6. **Console + Activity Monitor:** open Console → find one crash report, identify process + timestamp. Activity Monitor → sort by CPU and Memory; note memory pressure graph.
+7. **sysdiagnose on Mac:** `sudo sysdiagnose` in Terminal → note output path (/private/var/tmp/).
 
 ---
 
-## Saturday Jul 18 — Apple Diagnostics
+## Saturday Jul 18 — User Accounts, Password Reset, FileVault
 
-**Hours:** 1.5h
+**Hours:** 2.5h
 
 ### Topics
-- **Apple Diagnostics (formerly Apple Hardware Test):**
-  - Intel: hold **D** at startup (local) or **Opt+D** (internet version — downloads from Apple)
-  - Apple Silicon: hold **D** during power-on → runs before Startup Options appear
-  - What it tests: logic board, memory, storage controller, GPU, battery, Bluetooth, Wi-Fi
-  - Does NOT test: third-party peripherals, software issues, Thunderbolt external devices
-  - Output: reference code + progress bar; codes begin with letters (e.g. ADP, NDR, VFD, PPT)
-- **Reading reference codes:**
-  - Format: 3-letter prefix (component), rest = specific fault (e.g. `NDD001` = storage issue)
-  - After diagnostics: option to contact Apple, see result code, or restart
-  - Next step after positive code: run again to confirm; then escalate to Apple service
-- **When to run:** user reports hardware failure symptoms (random crashes, no display, not charging, kernel panics) — rule out software first (Safe Mode), then run diagnostics
+- **Account types on Mac:** Administrator, Standard, Sharing Only, Guest, root (disabled by default) — what each can/can't do
+- **Login password reset paths:**
+  1. Admin resets another user in Users & Groups
+  2. Apple Account reset at login (if enabled)
+  3. FileVault personal recovery key at login
+  4. Recovery mode `resetpassword` utility
+  - FileVault caveat: resetting a password by force can orphan the login keychain — user's saved passwords lost; new login keychain created
+- **FileVault:** XTS-AES encryption; Apple Silicon storage always hardware-encrypted — FileVault adds pre-boot authentication; multi-user unlock (enabled users only); personal vs institutional recovery keys; MDM escrow
+- `fdesetup status` / `fdesetup list` / `diskutil apfs list`
+- Lost password + lost recovery key = data unrecoverable
 
 ### Self-Check
-1. How do you launch Apple Diagnostics on an Intel Mac? On an Apple Silicon Mac?
-2. Apple Diagnostics reports a reference code starting with "NDD." What component area does this indicate?
-3. A user's MacBook randomly powers off under load. You boot into Safe Mode — it runs fine. Should you run Apple Diagnostics? Why or why not?
-4. Apple Diagnostics tests third-party Thunderbolt storage: True or False?
-5. After Apple Diagnostics completes with no issues, but the user still reports problems. What is the next diagnostic step?
+1. Rank the four password-reset paths a support tech should try for a locked-out FileVault Mac user.
+2. After a forced password reset the user complains Safari lost all saved passwords. Why?
+3. A Standard user tries to install software system-wide. What happens?
+4. Three accounts on a FileVault Mac; one is unlock-enabled. Another user powers it on. What do they see?
+5. What must an org configure before FileVault enablement to guarantee remote decryption capability?
 
 ### Anki Cards to Build
-- Apple Diagnostics Intel: hold D (local) / Opt+D (internet)
-- Apple Diagnostics Apple Silicon: hold D at power-on (before Startup Options)
-- Reference code format: 3-letter component prefix (NDD = storage, VFD = video, PPT = power)
-- Diagnostics scope: logic board, RAM, storage controller, GPU, battery, BT, Wi-Fi — NOT third-party peripherals
-- Positive result (no fault found) + ongoing issue → escalate to Console.app or service
+- Account types: Admin / Standard / Sharing Only / Guest / root (off by default)
+- Password reset paths: admin reset → Apple Account → FileVault recovery key → Recovery `resetpassword`
+- Forced reset breaks login keychain — saved passwords lost, new keychain created
+- FileVault on Apple Silicon = pre-boot auth layer on always-encrypted storage
+- MDM escrow must be configured BEFORE FileVault enable
 
 ---
 
@@ -71,79 +71,60 @@ No study. Full rest day.
 
 ---
 
-## Monday Jul 20 — Console.app + Crash Reports
+## Monday Jul 20 — Startup, Recovery, Erase + Reinstall
 
-**Hours:** 1.5h
+**Hours:** 2h
 
 ### Topics
-- **Console.app:** macOS log viewer — real-time log stream + historical logs
-  - Location: /Applications/Utilities/Console.app
-  - Key areas: All Messages, Crash Reports, Diagnostic Reports
-  - Log levels: Default, Info, Debug (Debug not shown by default — enable via Action menu)
-  - Filtering: search by process name, message content, subsystem, category
-- **Crash reports:**
-  - Location: `~/Library/Logs/DiagnosticReports/` (user crashes) + `/Library/Logs/DiagnosticReports/` (system)
-  - File types: `.crash` (app crash), `.ips` (iOS/macOS structured crash), `.spin` (hang report)
-  - Key fields in a crash report: Exception Type, Exception Codes, Crashed Thread, backtrace
-  - Common exception types: `EXC_BAD_ACCESS` (memory error), `SIGABRT` (app called abort), `SIGKILL` (system killed process)
-- **Kernel panics:**
-  - Written to: `/Library/Logs/DiagnosticReports/` as `.panic` files
-  - Also visible in: Console.app → Crash Reports section
-  - Key info in panic log: which kext or process triggered, macOS build, hardware details
-  - Common causes: third-party kext incompatibility, hardware fault, memory issue
+- **Apple Silicon startup:** hold Power → Startup Options; Safe Mode via Shift; fallback to Internet Recovery if local Recovery damaged; DFU restore via another Mac + Apple Configurator (firmware-level, last resort)
+- **Intel differences (exam-knowledge only):** Cmd+R local Recovery, Cmd+Opt+R Internet Recovery, Shift Safe Boot, D Diagnostics
+- **Startup Security Utility:** Full / Reduced / Permissive security; external boot policy
+- **macOS Recovery contents:** Reinstall macOS, Disk Utility (First Aid, erase), Terminal, Startup Security Utility, Share Disk
+- **Erase options:** Erase All Content and Settings (System Settings — Apple Silicon; fast, keeps macOS, wipes data/settings via Erase Assistant) vs full Disk Utility erase + reinstall
+- **Reinstall over existing macOS:** preserves user data + apps
+- **macOS Recovery logs:** available in Recovery for diagnosing failed recovery/reinstall
+- Redeployment context: Erase Assistant is the standard path to return a Mac to out-of-box for the next user
 
 ### Self-Check
-1. A user reports an app crashes every time they open a specific document. Where do you find the crash log for a user-space application?
-2. What is the difference between a `.crash` file and a `.spin` file in DiagnosticReports?
-3. A kernel panic log shows a third-party kext in the backtrace. What is the likely cause, and what is the first remediation step?
-4. Console.app by default shows Debug log level: True or False?
-5. Exception type `EXC_BAD_ACCESS` in a crash report indicates what category of error?
+1. Erase All Content and Settings vs Disk Utility erase + reinstall: when is each the right tool, and which is faster?
+2. An Apple Silicon Mac's local Recovery won't load. What happens next, automatically?
+3. A Mac must be handed to a new employee today. Which erase path and why?
+4. Reinstalling macOS from Recovery over the existing installation — what happens to user data?
+5. What tool and second device does a firmware-level (DFU) restore require?
 
 ### Anki Cards to Build
-- Crash logs path: `~/Library/Logs/DiagnosticReports/` (user) + `/Library/Logs/DiagnosticReports/` (system)
-- `.crash` = app crash | `.spin` = hang (not responding) | `.panic` = kernel panic
-- `EXC_BAD_ACCESS` = memory access violation (null pointer, buffer overrun)
-- `SIGABRT` = app called abort() — usually assertion failure or uncaught exception
-- Kernel panic cause: bad kext → boot to Safe Mode (no third-party kexts) to confirm
+- Erase All Content and Settings: Apple Silicon Erase Assistant — fast wipe, macOS stays, ideal for redeployment
+- Local Recovery damaged → automatic Internet Recovery fallback (Apple Silicon)
+- Reinstall over existing macOS = user data + apps preserved
+- DFU restore: Apple Configurator + second Mac + cable — firmware level
+- Startup Security Utility: Full (default) / Reduced / Permissive
 
 ---
 
-## Tuesday Jul 21 — FileVault Fundamentals
+## Tuesday Jul 21 — Diagnostics: Apple Diagnostics, Activity Monitor, Console, System Information, sysdiagnose
 
 **Hours:** 1h
 
 ### Topics
-- **FileVault:** macOS full-disk encryption
-  - Encrypts the entire APFS volume using XTS-AES-128 encryption
-  - Encryption happens at the storage layer — transparent to the user after unlock at login
-  - Requires user to sign in at boot to unlock — no auto-login with FileVault enabled
-- **FileVault + hardware:**
-  - **Intel Mac with T2 chip:** T2 handles encryption natively (always encrypted at hardware level); FileVault adds pre-boot authentication requirement
-  - **Apple Silicon:** storage is always encrypted (hardware, Secure Enclave); FileVault adds the pre-boot authentication layer only
-  - **Intel Mac without T2:** software encryption via FileVault — slower, no hardware acceleration
-- **Recovery keys:**
-  - **Personal recovery key:** 24-character key generated at FileVault setup; user must save it
-  - **Institutional recovery key:** set by admin via MDM or command line; allows org to decrypt any device
-  - If both are lost: data is unrecoverable — Apple cannot bypass FileVault
-- **Enabling FileVault:**
-  - System Settings → Privacy & Security → FileVault → Turn On
-  - Encryption happens in background — Mac fully usable during this process
-  - First restart after enable: user must log in to begin encryption
+- **Apple Diagnostics:** hold D at power-on (Apple Silicon); tests logic board, RAM, storage controller, GPU, battery, wireless; reference codes (NDD storage, VFD video, PPT power, MEM memory); clean result ≠ no hardware fault; run twice to confirm, escalate to Apple with code
+- **Activity Monitor:** CPU/Memory/Energy/Disk/Network tabs; memory pressure (green/yellow/red) beats "memory used" as health signal; identifying runaway processes; Force Quit
+- **Console:** live log stream + Crash Reports; `.crash` app crash, `.spin` hang, `.panic` kernel panic; crash paths `~/Library/Logs/DiagnosticReports/` (user) and `/Library/Logs/DiagnosticReports/` (system); kernel panic from third-party kext → Safe Mode isolates
+- **System Information:** hardware/software/network inventory — first stop for spec questions
+- **sysdiagnose (Mac):** `sudo sysdiagnose` → comprehensive log bundle for AppleCare/engineering escalation
 
 ### Self-Check
-1. FileVault is enabled on an Intel Mac without a T2 chip. What handles the encryption — hardware or software?
-2. A user enables FileVault and loses both their recovery key and forgets their login password. What happens to the data?
-3. What encryption standard does FileVault use?
-4. On an Apple Silicon Mac, is the storage encrypted even if FileVault is disabled?
-5. An MDM admin wants to decrypt a managed Mac without knowing the user's password. What must have been configured before encryption?
+1. Memory pressure is red but "memory used" seems normal to the user. What do you tell them, and what's the fix path?
+2. Issue disappears in Safe Mode. What's the diagnostic conclusion and next step?
+3. `.spin` file vs `.crash` file — what user complaint matches each?
+4. Apple Diagnostics returns no issues; user still gets random shutdowns. Next steps?
+5. AppleCare asks for a sysdiagnose. Command and output location?
 
 ### Anki Cards to Build
-- FileVault encryption: XTS-AES-128
-- Intel + T2: hardware encrypted always; FileVault adds pre-boot auth requirement only
-- Apple Silicon: hardware encrypted always (Secure Enclave); FileVault = pre-boot auth layer
-- Intel (no T2): software encryption via FileVault (slower)
-- Lost recovery key + lost password = data unrecoverable (no Apple backdoor)
-- Institutional recovery key: configured via MDM before FileVault enable
+- Memory pressure colour > memory-used number — red = RAM genuinely short
+- Safe Mode success → third-party kext/login item suspect → remove/re-add
+- `.crash` = crash | `.spin` = hang | `.panic` = kernel panic
+- Diagnostics codes: NDD storage / VFD video / PPT power / MEM memory
+- `sudo sysdiagnose` → /private/var/tmp/
 
 ---
 
@@ -151,12 +132,11 @@ No study. Full rest day.
 
 **Hours:** 0.5h | Office
 
-### Tasks
-1. Anki review: all Apple Week 3 cards + weak Week 1/2 cards
+1. Anki review: Week 3 cards
 2. 3 questions:
-   - A kernel panic happens every time a specific USB-C hub is connected. How would you diagnose this?
-   - Apple Diagnostics shows code VFD001. What component area is affected?
-   - FileVault is enabled on a Mac. The hard drive is physically removed and placed in another Mac. Can the data be read?
+   - Kernel panic on every boot except Safe Mode. Diagnosis walk-through?
+   - A departing user's FileVault Mac needs redeploying and IT has no recovery key escrowed. Options?
+   - Startup Options screen won't appear at all on an Apple Silicon Mac. Escalation path?
 
 ---
 
@@ -164,12 +144,11 @@ No study. Full rest day.
 
 **Hours:** 0.5h | Office
 
-### Tasks
-1. Revisit gaps from Wed
+1. Revisit gaps + course Check Your Understanding questions for Mac modules
 2. 3 questions:
-   - Where in Console.app do you find kernel panic logs?
-   - A user reports their M2 MacBook Air feels hot and the battery drains fast. No app crashes. What diagnostic tools would you use first?
-   - Institutional recovery key vs personal recovery key: when would you use each?
+   - User forgot login password; FileVault on; Apple Account reset not enabled. Which path recovers access, and what's the keychain side effect?
+   - Which Activity Monitor tab and metric identify an app draining a MacBook battery?
+   - When would you choose DFU restore over Recovery reinstall?
 
 ---
 
@@ -177,7 +156,6 @@ No study. Full rest day.
 
 **Hours:** 0.5h | Office — Anki only
 
-### Tasks
-1. Full review: Apple Weeks 1–3 Anki decks
-2. Flag: startup keys (Week 1), recovery modes (Week 2), diagnostic codes (Week 3)
-3. Note: FileVault deep-dive continues in Week 4 — just intro today
+1. Full review: Apple Weeks 1–3 decks
+2. Flag weak areas — likely: password-reset path order, erase-option selection
+3. Confirm labs done: Recovery walk, Safe Mode, Diagnostics run, FileVault enabled + fdesetup, second account, Console/Activity Monitor, sysdiagnose
