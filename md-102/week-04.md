@@ -195,7 +195,7 @@ No study. Full rest day.
 
 ---
 
-## Wednesday Jul 29 — D3 Gap Fill + Self-Check
+## Wednesday Jul 29 — D3 Gap Fill + Scripts & Remediations + Remote Help
 
 **Hours:** 2h | Office
 
@@ -203,6 +203,12 @@ No study. Full rest day.
 - Revisit any self-check failures from Sat–Tue
 - Settings catalog vs ADMX vs OMA-URI decision tree
 - Remote action use cases: when to use Retire vs Wipe vs Fresh Start vs Delete
+- **Scripts & Remediations (was Proactive Remediations):** Devices → Scripts and remediations — detection script + remediation script pairs; run as SYSTEM or user; schedule; also standalone platform scripts (PowerShell, run-once)
+- **Remote Help:** Intune-integrated remote assistance app; requires Remote Help add-on licence; roles via Intune RBAC; full control vs view-only; unenrolled-device support option
+
+### Extra Lab (dev tenant + HP laptop)
+1. Devices → Scripts and remediations → create a remediation pair: detection = check a registry value exists, remediation = create it. Assign to the HP device, sync, verify output in the report.
+2. Note where Remote Help sessions would be launched from (Devices → select device → New remote assistance session) — licence may block actual session; knowing the path is the exam requirement.
 
 ### Practice Questions (mixed D3 Part 1)
 1. An admin removes a setting from a settings catalog profile that was previously in conflict. When does the conflict resolve — immediately, or at next device check-in?
