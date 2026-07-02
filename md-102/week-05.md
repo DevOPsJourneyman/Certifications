@@ -291,6 +291,11 @@ No study. Full rest day.
 
 **Hours:** 2h | Office
 
+### Extra Topics (exam gaps not covered earlier)
+- **App configuration policies** (≠ app protection): pre-configure managed app settings (e.g. Outlook account setup, Edge homepage) — managed devices channel vs managed apps channel
+- **Windows kiosk:** Assigned Access via config profile — single-app vs multi-app kiosk; Shared PC mode for hot-desk devices
+- **Non-Windows enrollment in Intune** (MD-102 tests it): Apple MDM Push certificate prerequisite, ADE via Intune, Android Enterprise enrollment modes — your DEP-2026 Week 5 content covers the Apple side; skim the Intune-console angle here
+
 ### Tasks
 1. Revisit self-check failures from Mon–Wed (compliance states, detection rules, MAM data transfer)
 2. 5 mixed practice questions:
