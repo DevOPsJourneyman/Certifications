@@ -10,7 +10,7 @@
 ## Exam Format Reminder — DEP-2026 (Apple Certified IT Professional)
 
 - **Format:** Multiple choice + scenario-based questions
-- **Proctor:** Kryterion online proctoring or Apple-authorised test centre
+- **Proctor:** Pearson OnVUE online proctoring or Apple-authorised test centre
 - **Preparation:** Apple IT Training platform — complete all DEP-2026 modules
 
 ---
@@ -28,12 +28,12 @@ Walk through this in your head, no notes:
 If any answer felt uncertain → 10 min of targeted Anki, then stop.
 
 ### Logistics checklist
-- [ ] DEP-2026 booking confirmed — Kryterion email received
-- [ ] Exam format: online proctored (Kryterion) or test centre?
+- [ ] DEP-2026 booking confirmed — Pearson VUE email received
+- [ ] Exam format: online proctored (Pearson OnVUE) or test centre?
   - **Online:** quiet room, webcam on, ID visible, clear desk, no notes
   - **Test centre:** arrive 15 min early, government-issued photo ID
 - [ ] ID ready: government-issued photo ID
-- [ ] If online: Kryterion system check completed
+- [ ] If online: Pearson VUE system check completed
 - [ ] Start time confirmed — set an alarm
 
 ### Evening before
@@ -46,7 +46,7 @@ If any answer felt uncertain → 10 min of targeted Anki, then stop.
 ### Morning checklist
 - [ ] Light meal — nothing heavy
 - [ ] Skim top DEP-2026 traps only from `week-07.md` (5 min max)
-- [ ] Online: join Kryterion 30 min early; camera/mic check; ID ready; clear desk
+- [ ] Online: join Pearson OnVUE 30 min early; camera/mic check; ID ready; clear desk
 - [ ] Test centre: arrive 15 min early
 - [ ] No new reading
 
@@ -66,7 +66,7 @@ If any answer felt uncertain → 10 min of targeted Anki, then stop.
 **Hours:** 0.5h | Low effort — reflection only
 
 1. Record DEP-2026 result: pass/fail + score
-2. If failed — check domain breakdown; earliest retake: verify with Kryterion; plan a targeted 1–2 week review, don't restart from scratch
+2. If failed — check domain breakdown; earliest retake: verify with Pearson VUE; plan a targeted 1–2 week review, don't restart from scratch
 
 ---
 
@@ -95,5 +95,5 @@ If any answer felt uncertain → 10 min of targeted Anki, then stop.
 
 ### If any cert failed
 - Check domain breakdown in score report
-- Verify earliest retake window with the exam provider (Pearson for MD-102, Kryterion for Apple)
+- Verify earliest retake window with the exam provider (Pearson VUE for all three)
 - Plan a targeted review — patch the specific gaps, don't restart from scratch
